@@ -52,6 +52,10 @@ public class Main extends JavaPlugin {
         backupDir = new File ("backups");
         if (!backupDir.exists())
             backupDir.mkdirs();
+        backupDir = new File("backups/custom");
+        if (!backupDir.exists())
+            backupDir.mkdirs();
+        
         // load the properties
         PropertiesSystem pSystem = new PropertiesSystem();
 
@@ -59,7 +63,7 @@ public class Main extends JavaPlugin {
         PluginManager pm = server.getPluginManager();
 
         // the backupTask, which backups the system every X minutes
-        Runnable run = new BackupTask(server,pSystem);
+        BackupTask run = new BackupTask(server,pSystem);
 
         // for manuell backups
         pm.registerEvent(Type.PLAYER_COMMAND_PREPROCESS, new CommandListener(run) , Priority.Normal, this);

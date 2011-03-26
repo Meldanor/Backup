@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.entity.Player;
 
 /**
  * The BackupTask implements the Interface Runnable for getting executed by the
@@ -54,7 +55,7 @@ public class BackupTask implements Runnable {
      */
     @Override
     public void run () {
-        backupWorld();
+        backup(null);
     }
 
     /**
@@ -64,7 +65,7 @@ public class BackupTask implements Runnable {
      * Is this done, every world getting zipped and stored.
      * 
      */
-    private void backupWorld() {
+    public void backup(String backupName) {
 
         // the messages
         System.out.println("Start backup");
@@ -81,7 +82,14 @@ public class BackupTask implements Runnable {
             // make a temporary dir of the world
             DiscManagement.copyDirectory(world.getName(), new File("").getAbsolutePath(), "backups/"+world.getName());
             // zip the temporary dir
-            DiscManagement.zipDirectory("backups/"+world.getName(), "backups/".concat(world.getName()).concat(" ").concat(getDate()));
+            String targetName = world.getName();
+            String targetDir = "backups/";
+            if (backupName != null) {
+                targetName = backupName;
+                targetDir = targetDir.concat("custom/");
+            }
+
+            DiscManagement.zipDirectory("backups/"+world.getName(), targetDir.concat(targetName).concat(getDate()));
             // delete the temporary dir
             DiscManagement.deleteDirectory("backups/"+world.getName());
         }

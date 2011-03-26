@@ -73,7 +73,6 @@
     -->
     <target name="-post-jar">
         <copy failonerror="true" file="${dist.jar}" todir="\\Meldanor-pc\Minecraft Server\plugins"/>
-        <copy failonerror="true" file="${dist.jar}" todir="Release"/>
         <delete dir="${build.dir}"/>
         <delete dir="${dist.dir}"/>
     </target>

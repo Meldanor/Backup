@@ -17,6 +17,7 @@
 
 package backup;
 
+import io.DiscManagement;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,21 +32,33 @@ import java.io.InputStreamReader;
 public class PropertiesSystem {
 
     /** the index for the intervall for save intervall */
-    public final static int BACKUP_INTERVALL = 0;
+    public final static int INT_BACKUP_INTERVALL = 0;
     /** the index for the maximum count of backups */
-    public final static int MAX_BACKUPS      = 1;
+    public final static int INT_MAX_BACKUPS      = 1;
+    /** the index for the only ops can run manuell backups property*/
+    public final static int BOOL_ONLY_OPS        = 0;
 
     /** How big is the int value array*/
     private final int INT_VALUES_SIZE        = 2;
 
-    /** Stores every property*/
+    private final int BOOL_VALUES_SIZE       = 1;
+
+    /** Stores every int property*/
     private int[] intValues = new int[INT_VALUES_SIZE];
+
+    /** Stores every bool property*/
+    private boolean[] boolValues = new boolean[BOOL_VALUES_SIZE];
 
     /**
      * When constructed all properties are loaded. When no config.ini exists, the
      * default values are used
      */
     public PropertiesSystem() {
+        StringBuilder sBuilder = new StringBuilder("plugins");
+        sBuilder.append(DiscManagement.LINE_SEPARATOR);
+        sBuilder.append("Backup");
+        sBuilder.append(DiscManagement.LINE_SEPARATOR);
+        sBuilder.append("config.ini");
         File configFile = new File("plugins/Backup/config.ini");
         if (!configFile.exists()) {
             System.out.println("[Backup] couldn't find the config, create a default one!");
@@ -64,7 +77,11 @@ public class PropertiesSystem {
         try {
             // open a stream to the config.ini in the jar, because we can only accecs
             // over the class loader
-            bReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/res/config.ini")));
+            StringBuilder sBuilder = new StringBuilder(DiscManagement.LINE_SEPARATOR);
+            sBuilder.append("res");
+            sBuilder.append(DiscManagement.LINE_SEPARATOR);
+            sBuilder.append("config.ini");
+            bReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(sBuilder.toString())));
             String line = "";
             bWriter = new BufferedWriter(new FileWriter(configFile));
             // copy the content
@@ -104,10 +121,12 @@ public class PropertiesSystem {
                     continue;
                 if (line.startsWith("BackupIntervall"))
                     // 20 ticks on a server are one second and this crossed with 60 are minutes
-                    intValues[BACKUP_INTERVALL] = Integer.parseInt(line.substring(16)) * 20 * 60;
+                    intValues[INT_BACKUP_INTERVALL] = Integer.parseInt(line.substring(16)) * 20 * 60;
                 else if (line.startsWith("MaximumBackups"))
-                    intValues[MAX_BACKUPS] = Integer.parseInt(line.substring(15));
-                
+                    intValues[INT_MAX_BACKUPS] = Integer.parseInt(line.substring(15));
+                else if (line.startsWith("OnlyOps"))
+                    boolValues[BOOL_ONLY_OPS] = Boolean.parseBoolean(line.substring(8));
+
             }
         }
         catch(Exception e) {
@@ -130,7 +149,16 @@ public class PropertiesSystem {
      * @param property see the constants of PropertiesSystem
      * @return The value of the propertie
      */
-    public int getProperty(int property) {
+    public int getIntProperty(int property) {
         return intValues[property];
+    }
+
+    /**
+     * Get a value of the boolean stored properties
+     * @param property see the constants of PropertiesSystem
+     * @return The value of the propertie
+     */
+    public boolean getBooleanProperty(int property) {
+        return boolValues[property];
     }
 }

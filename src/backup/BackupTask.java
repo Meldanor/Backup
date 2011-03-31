@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.entity.Player;
 
 /**
  * The BackupTask implements the Interface Runnable for getting executed by the
@@ -47,7 +46,7 @@ public class BackupTask implements Runnable {
      */
     public BackupTask(Server server,PropertiesSystem pSystem) {
         this.server = server;
-        MAX_BACKUPS = pSystem.getProperty(PropertiesSystem.MAX_BACKUPS);
+        MAX_BACKUPS = pSystem.getIntProperty(PropertiesSystem.INT_MAX_BACKUPS);
     }
 
     /**
@@ -77,21 +76,24 @@ public class BackupTask implements Runnable {
 
         // iterate through every world and zip every one
         for (World world : server.getWorlds()) {
+
+            String backupDir = "backups".concat(DiscManagement.FILE_SEPARATOR).concat(world.getName());
             // save every information from the RAM into the HDD
             world.save();
             // make a temporary dir of the world
-            DiscManagement.copyDirectory(world.getName(), new File("").getAbsolutePath(), "backups/"+world.getName());
+            DiscManagement.copyDirectory(world.getName(), new File("").getAbsolutePath(), backupDir);
             // zip the temporary dir
             String targetName = world.getName();
-            String targetDir = "backups/";
+            String targetDir = "backups".concat(DiscManagement.FILE_SEPARATOR);
+
             if (backupName != null) {
                 targetName = backupName;
-                targetDir = targetDir.concat("custom/");
+                targetDir = targetDir.concat("custom").concat(DiscManagement.FILE_SEPARATOR);
             }
 
-            DiscManagement.zipDirectory("backups/"+world.getName(), targetDir.concat(targetName).concat(getDate()));
+            DiscManagement.zipDirectory(backupDir, targetDir.concat(targetName).concat(getDate()));
             // delete the temporary dir
-            DiscManagement.deleteDirectory("backups/"+world.getName());
+            DiscManagement.deleteDirectory(backupDir);
         }
         // enable the world save
         server.dispatchCommand(((CraftServer)server).getServer().console, "save-on");

@@ -26,6 +26,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import io.DiscManagement;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -46,13 +47,13 @@ public class Main extends JavaPlugin {
 
         setupPermissions();
 
-        File backupDir = new File("plugins/Backup");
+        File backupDir = new File("plugins".concat(DiscManagement.FILE_SEPARATOR).concat("Backup"));
         if (!backupDir.exists())
             backupDir.mkdirs();
         backupDir = new File ("backups");
         if (!backupDir.exists())
             backupDir.mkdirs();
-        backupDir = new File("backups/custom");
+        backupDir = new File("backups".concat(DiscManagement.FILE_SEPARATOR).concat("custom"));
         if (!backupDir.exists())
             backupDir.mkdirs();
         
@@ -66,10 +67,10 @@ public class Main extends JavaPlugin {
         BackupTask run = new BackupTask(server,pSystem);
 
         // for manuell backups
-        pm.registerEvent(Type.PLAYER_COMMAND_PREPROCESS, new CommandListener(run) , Priority.Normal, this);
+        pm.registerEvent(Type.PLAYER_COMMAND_PREPROCESS, new CommandListener(run,pSystem) , Priority.Normal, this);
 
         // start the backupTask, which will starts after X minutes and backup after X minutes
-        server.getScheduler().scheduleSyncRepeatingTask(this, run,pSystem.getProperty(PropertiesSystem.BACKUP_INTERVALL),pSystem.getProperty(PropertiesSystem.BACKUP_INTERVALL));
+        server.getScheduler().scheduleSyncRepeatingTask(this, run,pSystem.getIntProperty(PropertiesSystem.INT_BACKUP_INTERVALL),pSystem.getIntProperty(PropertiesSystem.INT_BACKUP_INTERVALL));
         System.out.println(this.getDescription().getFullName() + " was sucessfully loaded!");
     }
 

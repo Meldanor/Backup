@@ -24,7 +24,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.command.ConsoleCommandSender;
 
 /**
  * The BackupTask implements the Interface Runnable for getting executed by the
@@ -70,7 +70,8 @@ public class BackupTask implements Runnable {
         System.out.println("Start backup");
         server.broadcastMessage("Start backup");
         // a hack like methode to send the console command for disabling every world save
-        server.dispatchCommand(((CraftServer)server).getServer().console, "save-off");
+        ConsoleCommandSender ccs = new ConsoleCommandSender(server);
+        server.dispatchCommand(ccs, "save-off");
         // the Player Position are getting stored
         server.savePlayers();
 
@@ -96,7 +97,7 @@ public class BackupTask implements Runnable {
             DiscManagement.deleteDirectory(backupDir);
         }
         // enable the world save
-        server.dispatchCommand(((CraftServer)server).getServer().console, "save-on");
+        server.dispatchCommand(ccs, "save-on");
         // the messages
         server.broadcastMessage("Finished backup");
         System.out.println("Finished backup");

@@ -55,11 +55,11 @@ public class PropertiesSystem {
      */
     public PropertiesSystem() {
         StringBuilder sBuilder = new StringBuilder("plugins");
-        sBuilder.append(DiscManagement.LINE_SEPARATOR);
+        sBuilder.append(DiscManagement.FILE_SEPARATOR);
         sBuilder.append("Backup");
-        sBuilder.append(DiscManagement.LINE_SEPARATOR);
+        sBuilder.append(DiscManagement.FILE_SEPARATOR);
         sBuilder.append("config.ini");
-        File configFile = new File("plugins/Backup/config.ini");
+        File configFile = new File(sBuilder.toString());
         if (!configFile.exists()) {
             System.out.println("[Backup] couldn't find the config, create a default one!");
             createDefaultSettings(configFile);
@@ -77,11 +77,7 @@ public class PropertiesSystem {
         try {
             // open a stream to the config.ini in the jar, because we can only accecs
             // over the class loader
-            StringBuilder sBuilder = new StringBuilder(DiscManagement.LINE_SEPARATOR);
-            sBuilder.append("res");
-            sBuilder.append(DiscManagement.LINE_SEPARATOR);
-            sBuilder.append("config.ini");
-            bReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(sBuilder.toString())));
+            bReader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/res/config.ini")));
             String line = "";
             bWriter = new BufferedWriter(new FileWriter(configFile));
             // copy the content

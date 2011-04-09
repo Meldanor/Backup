@@ -74,27 +74,31 @@ public class BackupTask implements Runnable {
         server.dispatchCommand(ccs, "save-off");
         // the Player Position are getting stored
         server.savePlayers();
+        try {
+            // iterate through every world and zip every one
+            for (World world : server.getWorlds()) {
 
-        // iterate through every world and zip every one
-        for (World world : server.getWorlds()) {
+                String backupDir = "backups".concat(DiscManagement.FILE_SEPARATOR).concat(world.getName());
+                // save every information from the RAM into the HDD
+                world.save();
+                // make a temporary dir of the world
+                DiscManagement.copyDirectory(new File(world.getName()), new File(backupDir));
+//                FileUtils.copyDirectory(new File(world.getName()), new File(backupDir));
+                // zip the temporary dir
+                String targetName = world.getName();
+                String targetDir = "backups".concat(DiscManagement.FILE_SEPARATOR);
 
-            String backupDir = "backups".concat(DiscManagement.FILE_SEPARATOR).concat(world.getName());
-            // save every information from the RAM into the HDD
-            world.save();
-            // make a temporary dir of the world
-            DiscManagement.copyDirectory(world.getName(), new File("").getAbsolutePath(), backupDir);
-            // zip the temporary dir
-            String targetName = world.getName();
-            String targetDir = "backups".concat(DiscManagement.FILE_SEPARATOR);
-
-            if (backupName != null) {
-                targetName = backupName;
-                targetDir = targetDir.concat("custom").concat(DiscManagement.FILE_SEPARATOR);
+                if (backupName != null) {
+                    targetName = backupName;
+                    targetDir = targetDir.concat("custom").concat(DiscManagement.FILE_SEPARATOR);
+                }
+                DiscManagement.zipDirectory(backupDir, targetDir.concat(targetName).concat(getDate()));
+                // delete the temporary dir
+                DiscManagement.deleteDirectory(backupDir);
             }
-
-            DiscManagement.zipDirectory(backupDir, targetDir.concat(targetName).concat(getDate()));
-            // delete the temporary dir
-            DiscManagement.deleteDirectory(backupDir);
+        }
+        catch (Exception e) {
+            e.printStackTrace(System.out);
         }
         // enable the world save
         server.dispatchCommand(ccs, "save-on");

@@ -26,8 +26,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
-import io.DiscManagement;
 import org.bukkit.plugin.Plugin;
+
+import static io.FileUtils.FILE_SEPARATOR;
 
 /**
  *
@@ -37,6 +38,7 @@ public class Main extends JavaPlugin {
 
     public static PermissionHandler Permissions;
 
+    private BackupTask run;
 
     @Override
     public void onDisable () {
@@ -47,13 +49,13 @@ public class Main extends JavaPlugin {
 
         setupPermissions();
 
-        File backupDir = new File("plugins".concat(DiscManagement.FILE_SEPARATOR).concat("Backup"));
+        File backupDir = new File("plugins".concat(FILE_SEPARATOR).concat("Backup"));
         if (!backupDir.exists())
             backupDir.mkdirs();
         backupDir = new File ("backups");
         if (!backupDir.exists())
             backupDir.mkdirs();
-        backupDir = new File("backups".concat(DiscManagement.FILE_SEPARATOR).concat("custom"));
+        backupDir = new File("backups".concat(FILE_SEPARATOR).concat("custom"));
         if (!backupDir.exists())
             backupDir.mkdirs();
         
@@ -64,11 +66,10 @@ public class Main extends JavaPlugin {
         PluginManager pm = server.getPluginManager();
 
         // the backupTask, which backups the system every X minutes
-        BackupTask run = new BackupTask(server,pSystem);
+        run = new BackupTask(server,pSystem);
 
         // for manuell backups
         pm.registerEvent(Type.PLAYER_COMMAND_PREPROCESS, new CommandListener(run,pSystem) , Priority.Normal, this);
-
         // start the backupTask, which will starts after X minutes and backup after X minutes
         server.getScheduler().scheduleSyncRepeatingTask(this, run,pSystem.getIntProperty(PropertiesSystem.INT_BACKUP_INTERVALL),pSystem.getIntProperty(PropertiesSystem.INT_BACKUP_INTERVALL));
         System.out.println(this.getDescription().getFullName() + " was sucessfully loaded!");
@@ -85,5 +86,4 @@ public class Main extends JavaPlugin {
           }
       }
   }
-
 }

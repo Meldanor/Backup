@@ -19,12 +19,14 @@ package backup;
 
 import org.bukkit.Server;
 import org.bukkit.World;
-import io.DiscManagement;
+import io.FileUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import org.bukkit.command.ConsoleCommandSender;
+
+import static io.FileUtils.FILE_SEPARATOR;
 
 /**
  * The BackupTask implements the Interface Runnable for getting executed by the
@@ -39,6 +41,8 @@ public class BackupTask implements Runnable {
     // How many Backups can exists at one time
     private final int MAX_BACKUPS;
 
+    private final PropertiesSystem pSystem;
+
     /**
      * The only constructur for the BackupTask.
      * @param server The server where the Task is running on
@@ -46,6 +50,7 @@ public class BackupTask implements Runnable {
      */
     public BackupTask(Server server,PropertiesSystem pSystem) {
         this.server = server;
+        this.pSystem = pSystem;
         MAX_BACKUPS = pSystem.getIntProperty(PropertiesSystem.INT_MAX_BACKUPS);
     }
 
@@ -54,7 +59,12 @@ public class BackupTask implements Runnable {
      */
     @Override
     public void run () {
-        backup(null);
+        if ((pSystem.getBooleanProperty(PropertiesSystem.BOOL_BACKUP_ONLY_PLAYER) && server.getOnlinePlayers().length > 0) ||
+            !pSystem.getBooleanProperty(PropertiesSystem.BOOL_BACKUP_ONLY_PLAYER))
+            backup(null);
+        else {
+            System.out.println("[BACKUP] The server skip backup, because no player are online!");
+        }
     }
 
     /**
@@ -78,23 +88,22 @@ public class BackupTask implements Runnable {
             // iterate through every world and zip every one
             for (World world : server.getWorlds()) {
 
-                String backupDir = "backups".concat(DiscManagement.FILE_SEPARATOR).concat(world.getName());
+                String backupDir = "backups".concat(FILE_SEPARATOR).concat(world.getName());
                 // save every information from the RAM into the HDD
                 world.save();
                 // make a temporary dir of the world
-                DiscManagement.copyDirectory(new File(world.getName()), new File(backupDir));
-//                FileUtils.copyDirectory(new File(world.getName()), new File(backupDir));
+                FileUtils.copyDirectory(new File(world.getName()), new File(backupDir));
                 // zip the temporary dir
                 String targetName = world.getName();
-                String targetDir = "backups".concat(DiscManagement.FILE_SEPARATOR);
+                String targetDir = "backups".concat(FILE_SEPARATOR);
 
                 if (backupName != null) {
                     targetName = backupName;
-                    targetDir = targetDir.concat("custom").concat(DiscManagement.FILE_SEPARATOR);
+                    targetDir = targetDir.concat("custom").concat(FILE_SEPARATOR);
                 }
-                DiscManagement.zipDirectory(backupDir, targetDir.concat(targetName).concat(getDate()));
+                FileUtils.zipDirectory(backupDir, targetDir.concat(targetName).concat(getDate()));
                 // delete the temporary dir
-                DiscManagement.deleteDirectory(backupDir);
+                FileUtils.deleteDirectory(new File(backupDir));
             }
         }
         catch (Exception e) {

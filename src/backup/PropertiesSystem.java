@@ -17,13 +17,14 @@
 
 package backup;
 
-import io.DiscManagement;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+
+import static io.FileUtils.FILE_SEPARATOR;
 
 /**
  *
@@ -37,11 +38,13 @@ public class PropertiesSystem {
     public final static int INT_MAX_BACKUPS      = 1;
     /** the index for the only ops can run manuell backups property*/
     public final static int BOOL_ONLY_OPS        = 0;
+    /** the index for the only run a backup when player are online property*/
+    public final static int BOOL_BACKUP_ONLY_PLAYER = 1;
 
     /** How big is the int value array*/
     private final int INT_VALUES_SIZE        = 2;
 
-    private final int BOOL_VALUES_SIZE       = 1;
+    private final int BOOL_VALUES_SIZE       = 2;
 
     /** Stores every int property*/
     private int[] intValues = new int[INT_VALUES_SIZE];
@@ -55,9 +58,9 @@ public class PropertiesSystem {
      */
     public PropertiesSystem() {
         StringBuilder sBuilder = new StringBuilder("plugins");
-        sBuilder.append(DiscManagement.FILE_SEPARATOR);
+        sBuilder.append(FILE_SEPARATOR);
         sBuilder.append("Backup");
-        sBuilder.append(DiscManagement.FILE_SEPARATOR);
+        sBuilder.append(FILE_SEPARATOR);
         sBuilder.append("config.ini");
         File configFile = new File(sBuilder.toString());
         if (!configFile.exists()) {
@@ -122,7 +125,8 @@ public class PropertiesSystem {
                     intValues[INT_MAX_BACKUPS] = Integer.parseInt(line.substring(15));
                 else if (line.startsWith("OnlyOps"))
                     boolValues[BOOL_ONLY_OPS] = Boolean.parseBoolean(line.substring(8));
-
+                else if (line.startsWith("BackupOnlyWithPlayer"))
+                    boolValues[BOOL_BACKUP_ONLY_PLAYER] = Boolean.parseBoolean(line.substring(21));
             }
         }
         catch(Exception e) {

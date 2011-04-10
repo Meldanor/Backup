@@ -1,3 +1,7 @@
 name: Backup
 main: backup.Main
 version: 1.3
+commands:
+  backup:
+    description: Starts a backup of the server
+    usage: /<command> OPTIONAL_NAME

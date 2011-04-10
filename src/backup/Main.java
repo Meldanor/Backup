@@ -19,6 +19,8 @@ package backup;
 
 import java.io.File;
 import org.bukkit.Server;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.PluginManager;
@@ -74,6 +76,17 @@ public class Main extends JavaPlugin {
         server.getScheduler().scheduleSyncRepeatingTask(this, run,pSystem.getIntProperty(PropertiesSystem.INT_BACKUP_INTERVALL),pSystem.getIntProperty(PropertiesSystem.INT_BACKUP_INTERVALL));
         System.out.println(this.getDescription().getFullName() + " was sucessfully loaded!");
     }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (args != null && args.length == 1)
+            run.backup(args[0]);
+        else
+            run.backup(null);
+        return true;
+    }
+
+
 
     private void setupPermissions() {
       Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");

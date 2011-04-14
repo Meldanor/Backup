@@ -33,7 +33,7 @@ import static io.FileUtils.FILE_SEPARATOR;
  * Server Scheduler. The implemented function run backups the system.
  * @author Kilian Gaertner
  */
-public class BackupTask implements Runnable {
+public class BackupTask implements Runnable, PropertyConstants {
 
     // The server where the Task is running
     private Server server = null;
@@ -51,7 +51,7 @@ public class BackupTask implements Runnable {
     public BackupTask(Server server,PropertiesSystem pSystem) {
         this.server = server;
         this.pSystem = pSystem;
-        MAX_BACKUPS = pSystem.getIntProperty(PropertiesSystem.INT_MAX_BACKUPS);
+        MAX_BACKUPS = pSystem.getIntProperty(INT_MAX_BACKUPS);
     }
 
     /**
@@ -59,8 +59,8 @@ public class BackupTask implements Runnable {
      */
     @Override
     public void run () {
-        if ((pSystem.getBooleanProperty(PropertiesSystem.BOOL_BACKUP_ONLY_PLAYER) && server.getOnlinePlayers().length > 0) ||
-            !pSystem.getBooleanProperty(PropertiesSystem.BOOL_BACKUP_ONLY_PLAYER))
+        if ((pSystem.getBooleanProperty(BOOL_BACKUP_ONLY_PLAYER) && server.getOnlinePlayers().length > 0) ||
+            !pSystem.getBooleanProperty(BOOL_BACKUP_ONLY_PLAYER))
             backup(null);
         else {
             System.out.println("[BACKUP] The server skip backup, because no player are online!");
@@ -77,17 +77,18 @@ public class BackupTask implements Runnable {
     public void backup(String backupName) {
 
         // the messages
-        System.out.println("Start backup");
-        server.broadcastMessage("Start backup");
+        String startBackupMessage = pSystem.getStringProperty(STRING_START_BACKUP_MESSAGE);
+        System.out.println(startBackupMessage);
+        server.broadcastMessage(startBackupMessage);
         // a hack like methode to send the console command for disabling every world save
         ConsoleCommandSender ccs = new ConsoleCommandSender(server);
+        server.dispatchCommand(ccs, "save-all");
         server.dispatchCommand(ccs, "save-off");
         // the Player Position are getting stored
         server.savePlayers();
         try {
             // iterate through every world and zip every one
             for (World world : server.getWorlds()) {
-
                 String backupDir = "backups".concat(FILE_SEPARATOR).concat(world.getName());
                 // save every information from the RAM into the HDD
                 world.save();
@@ -112,8 +113,9 @@ public class BackupTask implements Runnable {
         // enable the world save
         server.dispatchCommand(ccs, "save-on");
         // the messages
-        server.broadcastMessage("Finished backup");
-        System.out.println("Finished backup");
+        String completedBackupMessage = pSystem.getStringProperty(STRING_FINISH_BACKUP_MESSAGE);
+        server.broadcastMessage(completedBackupMessage);
+        System.out.println(completedBackupMessage);
         // check whether there are old backups to delete
         deleteOldBackups();
     }

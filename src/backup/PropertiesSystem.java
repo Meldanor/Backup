@@ -30,27 +30,23 @@ import static io.FileUtils.FILE_SEPARATOR;
  *
  * @author Kilian Gaertner
  */
-public class PropertiesSystem {
-
-    /** the index for the intervall for save intervall */
-    public final static int INT_BACKUP_INTERVALL = 0;
-    /** the index for the maximum count of backups */
-    public final static int INT_MAX_BACKUPS      = 1;
-    /** the index for the only ops can run manuell backups property*/
-    public final static int BOOL_ONLY_OPS        = 0;
-    /** the index for the only run a backup when player are online property*/
-    public final static int BOOL_BACKUP_ONLY_PLAYER = 1;
+public class PropertiesSystem implements PropertyConstants{
 
     /** How big is the int value array*/
     private final int INT_VALUES_SIZE        = 2;
 
     private final int BOOL_VALUES_SIZE       = 2;
 
+    private final int STRING_VALUES_SIZE     = 2;
+
     /** Stores every int property*/
     private int[] intValues = new int[INT_VALUES_SIZE];
 
     /** Stores every bool property*/
     private boolean[] boolValues = new boolean[BOOL_VALUES_SIZE];
+
+    /** Stores every string property */
+    private String[] stringValues = new String[STRING_VALUES_SIZE];
 
     /**
      * When constructed all properties are loaded. When no config.ini exists, the
@@ -119,7 +115,7 @@ public class PropertiesSystem {
                 if (line.startsWith("//"))
                     continue;
                 if (line.startsWith("BackupIntervall"))
-                    // 20 ticks on a server are one second and this crossed with 60 are minutes
+//                     20 ticks on a server are one second and this crossed with 60 are minutes
                     intValues[INT_BACKUP_INTERVALL] = Integer.parseInt(line.substring(16)) * 20 * 60;
                 else if (line.startsWith("MaximumBackups"))
                     intValues[INT_MAX_BACKUPS] = Integer.parseInt(line.substring(15));
@@ -127,6 +123,10 @@ public class PropertiesSystem {
                     boolValues[BOOL_ONLY_OPS] = Boolean.parseBoolean(line.substring(8));
                 else if (line.startsWith("BackupOnlyWithPlayer"))
                     boolValues[BOOL_BACKUP_ONLY_PLAYER] = Boolean.parseBoolean(line.substring(21));
+                else if (line.startsWith("MessageStartBackup"))
+                    stringValues[STRING_START_BACKUP_MESSAGE] = line.substring(19);
+                else if (line.startsWith("MessageFinishBackup"))
+                    stringValues[STRING_FINISH_BACKUP_MESSAGE] = line.substring(20);
             }
         }
         catch(Exception e) {
@@ -160,5 +160,14 @@ public class PropertiesSystem {
      */
     public boolean getBooleanProperty(int property) {
         return boolValues[property];
+    }
+
+    /**
+     * Get a value of the string stored properties
+     * @param property see the constants of PropertiesSystem
+     * @return The value of the propertie
+     */
+    public String getStringProperty(int property) {
+        return stringValues[property];
     }
 }

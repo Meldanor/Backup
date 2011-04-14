@@ -25,7 +25,7 @@ import org.bukkit.event.player.PlayerListener;
  * For manual backups
  * @author Kilian Gaertner
  */
-public class CommandListener extends PlayerListener {
+public class CommandListener extends PlayerListener implements PropertyConstants {
 
     private BackupTask backupTask = null;
     private PropertiesSystem pSystem = null;
@@ -46,7 +46,7 @@ public class CommandListener extends PlayerListener {
             // only Player can backup when the properties only ops can backup is set by the server AND the player is an operator
             if (Main.Permissions != null && !Main.Permissions.has(player, "backup.canbackup"))
                 return;
-            if (pSystem.getBooleanProperty(PropertiesSystem.BOOL_ONLY_OPS) && !player.isOp()) {
+            if (pSystem.getBooleanProperty(BOOL_ONLY_OPS) && !player.isOp()) {
                 player.sendMessage("You dont have the rights to backup the server!");
                 return;
             }

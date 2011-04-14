@@ -36,7 +36,7 @@ import static io.FileUtils.FILE_SEPARATOR;
  *
  * @author Kilian Gaertner
  */
-public class Main extends JavaPlugin {
+public class Main extends JavaPlugin implements PropertyConstants {
 
     public static PermissionHandler Permissions;
 
@@ -73,20 +73,20 @@ public class Main extends JavaPlugin {
         // for manuell backups
         pm.registerEvent(Type.PLAYER_COMMAND_PREPROCESS, new CommandListener(run,pSystem) , Priority.Normal, this);
         // start the backupTask, which will starts after X minutes and backup after X minutes
-        server.getScheduler().scheduleSyncRepeatingTask(this, run,pSystem.getIntProperty(PropertiesSystem.INT_BACKUP_INTERVALL),pSystem.getIntProperty(PropertiesSystem.INT_BACKUP_INTERVALL));
+        int intervall = pSystem.getIntProperty(INT_BACKUP_INTERVALL);
+        server.getScheduler().scheduleAsyncRepeatingTask(this, run,intervall,intervall);
         System.out.println(this.getDescription().getFullName() + " was sucessfully loaded!");
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+
         if (args != null && args.length == 1)
             run.backup(args[0]);
         else
             run.backup(null);
         return true;
     }
-
-
 
     private void setupPermissions() {
       Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");

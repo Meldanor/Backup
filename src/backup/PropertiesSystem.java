@@ -37,7 +37,7 @@ public class PropertiesSystem implements PropertyConstants{
 
     private final int BOOL_VALUES_SIZE       = 2;
 
-    private final int STRING_VALUES_SIZE     = 2;
+    private final int STRING_VALUES_SIZE     = 3;
 
     /** Stores every int property*/
     private int[] intValues = new int[INT_VALUES_SIZE];
@@ -127,6 +127,8 @@ public class PropertiesSystem implements PropertyConstants{
                     stringValues[STRING_START_BACKUP_MESSAGE] = line.substring(19);
                 else if (line.startsWith("MessageFinishBackup"))
                     stringValues[STRING_FINISH_BACKUP_MESSAGE] = line.substring(20);
+                else if (line.startsWith("DontBackupWorlds"))
+                    stringValues[STRING_NO_BACKUP_WORLDNAMES] = line.substring(17);
             }
         }
         catch(Exception e) {

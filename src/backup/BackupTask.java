@@ -86,9 +86,20 @@ public class BackupTask implements Runnable, PropertyConstants {
         server.dispatchCommand(ccs, "save-off");
         // the Player Position are getting stored
         server.savePlayers();
+
+        String[] worldNames = pSystem.getStringProperty(STRING_NO_BACKUP_WORLDNAMES).split(";");
+        if (worldNames.length > 0 && !worldNames[0].isEmpty()) {
+            System.out.println("[BACKUP] Skip the followning worlds :");
+            System.out.println(Arrays.toString(worldNames));
+        }
         try {
             // iterate through every world and zip every one
+            outter :
             for (World world : server.getWorlds()) {
+                inner :
+                for(String worldName : worldNames)
+                    if (worldName.equalsIgnoreCase(world.getName()))
+                        continue outter;
                 String backupDir = "backups".concat(FILE_SEPARATOR).concat(world.getName());
                 // save every information from the RAM into the HDD
                 world.save();

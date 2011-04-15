@@ -72,6 +72,8 @@ public class Main extends JavaPlugin implements PropertyConstants {
 
         // for manuell backups
         pm.registerEvent(Type.PLAYER_COMMAND_PREPROCESS, new CommandListener(run,pSystem) , Priority.Normal, this);
+        pm.registerEvent(Type.PLAYER_LOGIN, new LoginListener(this,pSystem), Priority.Normal, this);
+        pm.registerEvent(Type.PLAYER_QUIT, new LoginListener(this,pSystem), Priority.Normal, this);
         // start the backupTask, which will starts after X minutes and backup after X minutes
         int intervall = pSystem.getIntProperty(INT_BACKUP_INTERVALL);
         server.getScheduler().scheduleAsyncRepeatingTask(this, run,intervall,intervall);

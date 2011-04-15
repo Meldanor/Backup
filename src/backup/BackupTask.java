@@ -101,6 +101,11 @@ public class BackupTask implements Runnable, PropertyConstants {
                     if (worldName.equalsIgnoreCase(world.getName()))
                         continue outter;
                 String backupDir = "backups".concat(FILE_SEPARATOR).concat(world.getName());
+                boolean hasToZIP = pSystem.getBooleanProperty(BOOL_ZIP);
+                if (!hasToZIP) {
+                    backupDir.concat(this.getDate());
+                    System.out.println("[BACKUP] Zipping backup is disabled!");
+                }
                 // save every information from the RAM into the HDD
                 world.save();
                 // make a temporary dir of the world
@@ -113,9 +118,11 @@ public class BackupTask implements Runnable, PropertyConstants {
                     targetName = backupName;
                     targetDir = targetDir.concat("custom").concat(FILE_SEPARATOR);
                 }
-                FileUtils.zipDirectory(backupDir, targetDir.concat(targetName).concat(getDate()));
-                // delete the temporary dir
-                FileUtils.deleteDirectory(new File(backupDir));
+                if (hasToZIP) {
+                    FileUtils.zipDirectory(backupDir, targetDir.concat(targetName).concat(getDate()));
+                    // delete the temporary dir
+                     FileUtils.deleteDirectory(new File(backupDir));
+                }
             }
         }
         catch (Exception e) {

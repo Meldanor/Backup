@@ -35,7 +35,7 @@ public class PropertiesSystem implements PropertyConstants{
     /** How big is the int value array*/
     private final int INT_VALUES_SIZE        = 2;
 
-    private final int BOOL_VALUES_SIZE       = 2;
+    private final int BOOL_VALUES_SIZE       = 3;
 
     private final int STRING_VALUES_SIZE     = 3;
 
@@ -129,6 +129,8 @@ public class PropertiesSystem implements PropertyConstants{
                     stringValues[STRING_FINISH_BACKUP_MESSAGE] = line.substring(20);
                 else if (line.startsWith("DontBackupWorlds"))
                     stringValues[STRING_NO_BACKUP_WORLDNAMES] = line.substring(17);
+                else if (line.startsWith("ZIPBackup"))
+                    boolValues[BOOL_ZIP] = Boolean.parseBoolean(line.substring(10));
             }
         }
         catch(Exception e) {

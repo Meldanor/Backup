@@ -32,6 +32,8 @@ public interface PropertyConstants {
     public final int BOOL_ONLY_OPS              = 0;
     /** the index for the only run a backup when player are online property*/
     public final int BOOL_BACKUP_ONLY_PLAYER    = 1;
+    /** the index whether the server has to zip or just store property */
+    public final int BOOL_ZIP                   = 2;
 
     /** the index for the starting backup message */
     public final int STRING_START_BACKUP_MESSAGE    = 0;

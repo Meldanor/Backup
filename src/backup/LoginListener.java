@@ -24,11 +24,11 @@ import org.bukkit.plugin.Plugin;
 
 /**
  *
- * @author Meldanor
+ * @author Kilian Gaertner
  */
 public class LoginListener extends PlayerListener implements PropertyConstants{
 
-    private int taskID = 0;
+    private int taskID = -2;
     private PropertiesSystem pSystem;
     private Plugin plugin;
 
@@ -41,8 +41,11 @@ public class LoginListener extends PlayerListener implements PropertyConstants{
     public void onPlayerLogin(PlayerLoginEvent event) {
         Player player = event.getPlayer();
         Server server = player.getServer();
-        if (server.getOnlinePlayers().length > 0)
+        if (taskID != -2 && server.getOnlinePlayers().length == 1) {
             server.getScheduler().cancelTask(taskID);
+            System.out.println("[BACKUP] Stopped last backup, start with normal backup cyclus!");
+            taskID = -2;
+        }
     }
 
     @Override
@@ -50,9 +53,9 @@ public class LoginListener extends PlayerListener implements PropertyConstants{
         Player player = event.getPlayer();
         Server server = player.getServer();
         if (server.getOnlinePlayers().length <= 1) {
-            taskID =  server.getScheduler().scheduleAsyncDelayedTask(plugin,new LastBackupTask(server,pSystem),pSystem.getIntProperty(INT_BACKUP_INTERVALL));
+            int intervall = pSystem.getIntProperty(INT_BACKUP_INTERVALL);
+            System.out.println("[BACKUP] Initiate a last backup because the last player left. It will start to backup in "+(intervall /1200)+" minutes when no player will have connected in this time.");
+            taskID =  server.getScheduler().scheduleAsyncDelayedTask(plugin,new LastBackupTask(server,pSystem),intervall);
         }
     }
-
-
 }

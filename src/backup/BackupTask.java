@@ -43,6 +43,10 @@ public class BackupTask implements Runnable, PropertyConstants {
 
     private final PropertiesSystem pSystem;
 
+    private String backupName;
+
+    private boolean isManuelBackup;
+
     /**
      * The only constructur for the BackupTask.
      * @param server The server where the Task is running on
@@ -59,9 +63,12 @@ public class BackupTask implements Runnable, PropertyConstants {
      */
     @Override
     public void run () {
-        if ((pSystem.getBooleanProperty(BOOL_BACKUP_ONLY_PLAYER) && server.getOnlinePlayers().length > 0) ||
-            !pSystem.getBooleanProperty(BOOL_BACKUP_ONLY_PLAYER))
-            backup(null);
+        boolean backupOnlyWithPlayer = pSystem.getBooleanProperty(BOOL_BACKUP_ONLY_PLAYER);
+        if ((backupOnlyWithPlayer && server.getOnlinePlayers().length > 0) ||
+            !backupOnlyWithPlayer ||
+            isManuelBackup ||
+            backupName != null)
+            backup();
         else {
             System.out.println("[BACKUP] The server skip backup, because no player are online!");
         }
@@ -74,7 +81,7 @@ public class BackupTask implements Runnable, PropertyConstants {
      * Is this done, every world getting zipped and stored.
      * 
      */
-    public void backup(String backupName) {
+    protected void backup() {
 
         // the messages
         String startBackupMessage = pSystem.getStringProperty(STRING_START_BACKUP_MESSAGE);
@@ -136,6 +143,8 @@ public class BackupTask implements Runnable, PropertyConstants {
         System.out.println(completedBackupMessage);
         // check whether there are old backups to delete
         deleteOldBackups();
+        backupName = null;
+        isManuelBackup = false;
     }
 
     /**
@@ -215,5 +224,13 @@ public class BackupTask implements Runnable, PropertyConstants {
         catch(Exception e) {
             e.printStackTrace(System.out);
         }
+    }
+
+    public void setBackupName(String backupName) {
+        this.backupName = backupName;
+    }
+
+    public void setAsManuelBackup() {
+        this.isManuelBackup = true;
     }
 }

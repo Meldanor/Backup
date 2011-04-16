@@ -71,9 +71,13 @@ public class Main extends JavaPlugin implements PropertyConstants {
         run = new BackupTask(server,pSystem);
 
         // for manuell backups
-        pm.registerEvent(Type.PLAYER_COMMAND_PREPROCESS, new CommandListener(run,pSystem) , Priority.Normal, this);
-        pm.registerEvent(Type.PLAYER_LOGIN, new LoginListener(this,pSystem), Priority.Normal, this);
-        pm.registerEvent(Type.PLAYER_QUIT, new LoginListener(this,pSystem), Priority.Normal, this);
+        pm.registerEvent(Type.PLAYER_COMMAND_PREPROCESS, new CommandListener(run,pSystem,this) , Priority.Normal, this);
+        
+        if (pSystem.getBooleanProperty(BOOL_BACKUP_ONLY_PLAYER)) {
+            LoginListener ll = new LoginListener(this,pSystem);
+            pm.registerEvent(Type.PLAYER_LOGIN, ll, Priority.Normal, this);
+            pm.registerEvent(Type.PLAYER_QUIT, ll, Priority.Normal, this);
+        }
         // start the backupTask, which will starts after X minutes and backup after X minutes
         int intervall = pSystem.getIntProperty(INT_BACKUP_INTERVALL);
         server.getScheduler().scheduleAsyncRepeatingTask(this, run,intervall,intervall);
@@ -82,11 +86,11 @@ public class Main extends JavaPlugin implements PropertyConstants {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
+        run.setAsManuelBackup();
         if (args != null && args.length == 1)
-            run.backup(args[0]);
-        else
-            run.backup(null);
+            run.setBackupName(args[0]);
+        this.getServer().getScheduler().scheduleAsyncDelayedTask(this, run);
+
         return true;
     }
 

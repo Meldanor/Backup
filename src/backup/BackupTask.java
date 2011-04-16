@@ -101,6 +101,9 @@ public class BackupTask implements Runnable, PropertyConstants {
         }
         try {
             // iterate through every world and zip every one
+            boolean hasToZIP = pSystem.getBooleanProperty(BOOL_ZIP);
+            if (hasToZIP)
+                System.out.println("[BACKUP] Zipping backup is disabled!");
             outter :
             for (World world : server.getWorlds()) {
                 inner :
@@ -108,11 +111,8 @@ public class BackupTask implements Runnable, PropertyConstants {
                     if (worldName.equalsIgnoreCase(world.getName()))
                         continue outter;
                 String backupDir = "backups".concat(FILE_SEPARATOR).concat(world.getName());
-                boolean hasToZIP = pSystem.getBooleanProperty(BOOL_ZIP);
-                if (!hasToZIP) {
-                    backupDir.concat(this.getDate());
-                    System.out.println("[BACKUP] Zipping backup is disabled!");
-                }
+                if (!hasToZIP)
+                    backupDir = backupDir.concat(this.getDate());
                 // save every information from the RAM into the HDD
                 world.save();
                 // make a temporary dir of the world

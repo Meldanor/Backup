@@ -102,7 +102,7 @@ public class BackupTask implements Runnable, PropertyConstants {
         try {
             // iterate through every world and zip every one
             boolean hasToZIP = pSystem.getBooleanProperty(BOOL_ZIP);
-            if (hasToZIP)
+            if (!hasToZIP)
                 System.out.println("[BACKUP] Zipping backup is disabled!");
             outter :
             for (World world : server.getWorlds()) {

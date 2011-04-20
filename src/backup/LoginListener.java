@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package backup;
 
 import org.bukkit.Server;
@@ -26,7 +25,7 @@ import org.bukkit.plugin.Plugin;
  *
  * @author Kilian Gaertner
  */
-public class LoginListener extends PlayerListener implements PropertyConstants{
+public class LoginListener extends PlayerListener implements PropertyConstants {
 
     private int taskID = -2;
     private PropertiesSystem pSystem;
@@ -54,8 +53,8 @@ public class LoginListener extends PlayerListener implements PropertyConstants{
         Server server = player.getServer();
         if (server.getOnlinePlayers().length <= 1) {
             int intervall = pSystem.getIntProperty(INT_BACKUP_INTERVALL);
-            System.out.println("[BACKUP] Initiate a last backup because the last player left. It will start to backup in "+(intervall /1200)+" minutes when no player will have connected in this time.");
-            taskID =  server.getScheduler().scheduleAsyncDelayedTask(plugin,new LastBackupTask(server,pSystem),intervall);
+            System.out.println("[BACKUP] Initiate a last backup because the last player left. It will start to backup in " + (intervall / 1200) + " minutes when no player will have connected in this time.");
+            taskID = server.getScheduler().scheduleAsyncDelayedTask(plugin, new LastBackupTask(server, pSystem), intervall);
         }
     }
 }

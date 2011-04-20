@@ -1,6 +1,6 @@
 name: Backup
 main: backup.Main
-version: 1.4
+version: 1.4a
 commands:
   backup:
     description: Starts a backup of the server

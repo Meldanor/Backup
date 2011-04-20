@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package backup;
 
 import org.bukkit.Server;
@@ -37,14 +36,10 @@ public class BackupTask implements Runnable, PropertyConstants {
 
     // The server where the Task is running
     private Server server = null;
-
     // How many Backups can exists at one time
     private final int MAX_BACKUPS;
-
     private final PropertiesSystem pSystem;
-
     private String backupName;
-
     private boolean isManuelBackup;
 
     /**
@@ -52,7 +47,7 @@ public class BackupTask implements Runnable, PropertyConstants {
      * @param server The server where the Task is running on
      * @param pSystem This must be a loaded PropertiesSystem
      */
-    public BackupTask(Server server,PropertiesSystem pSystem) {
+    public BackupTask(Server server, PropertiesSystem pSystem) {
         this.server = server;
         this.pSystem = pSystem;
         MAX_BACKUPS = pSystem.getIntProperty(INT_MAX_BACKUPS);
@@ -62,15 +57,16 @@ public class BackupTask implements Runnable, PropertyConstants {
      * The implemented function. It starts the backup of the server
      */
     @Override
-    public void run () {
+    public void run() {
         boolean backupOnlyWithPlayer = pSystem.getBooleanProperty(BOOL_BACKUP_ONLY_PLAYER);
-        if ((backupOnlyWithPlayer && server.getOnlinePlayers().length > 0) ||
-            !backupOnlyWithPlayer ||
-            isManuelBackup ||
-            backupName != null)
+        if ((backupOnlyWithPlayer && server.getOnlinePlayers().length > 0)
+                || !backupOnlyWithPlayer
+                || isManuelBackup
+                || backupName != null) {
             backup();
-        else {
-            System.out.println("[BACKUP] The server skip backup, because no player are online!");
+        } else {
+
+            System.out.println("[BACKUP] Scheduled backup was aborted due to lack of players. Next backup attempt in " + pSystem.getIntProperty(INT_BACKUP_INTERVALL) / 1200 + " minutes.");
         }
     }
 
@@ -96,23 +92,27 @@ public class BackupTask implements Runnable, PropertyConstants {
 
         String[] worldNames = pSystem.getStringProperty(STRING_NO_BACKUP_WORLDNAMES).split(";");
         if (worldNames.length > 0 && !worldNames[0].isEmpty()) {
-            System.out.println("[BACKUP] Skip the followning worlds :");
+            System.out.println("[BACKUP] Backup is disabled for the following world(s):");
             System.out.println(Arrays.toString(worldNames));
         }
         try {
             // iterate through every world and zip every one
             boolean hasToZIP = pSystem.getBooleanProperty(BOOL_ZIP);
-            if (!hasToZIP)
-                System.out.println("[BACKUP] Zipping backup is disabled!");
-            outter :
+            if (!hasToZIP) {
+                System.out.println("[BACKUP] Backup compression is disabled.");
+            }
+            outter:
             for (World world : server.getWorlds()) {
-                inner :
-                for(String worldName : worldNames)
-                    if (worldName.equalsIgnoreCase(world.getName()))
+                inner:
+                for (String worldName : worldNames) {
+                    if (worldName.equalsIgnoreCase(world.getName())) {
                         continue outter;
+                    }
+                }
                 String backupDir = "backups".concat(FILE_SEPARATOR).concat(world.getName());
-                if (!hasToZIP)
+                if (!hasToZIP) {
                     backupDir = backupDir.concat(this.getDate());
+                }
                 // save every information from the RAM into the HDD
                 world.save();
                 // make a temporary dir of the world
@@ -128,11 +128,10 @@ public class BackupTask implements Runnable, PropertyConstants {
                 if (hasToZIP) {
                     FileUtils.zipDirectory(backupDir, targetDir.concat(targetName).concat(getDate()));
                     // delete the temporary dir
-                     FileUtils.deleteDirectory(new File(backupDir));
+                    FileUtils.deleteDirectory(new File(backupDir));
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace(System.out);
         }
         // enable the world save
@@ -157,24 +156,28 @@ public class BackupTask implements Runnable, PropertyConstants {
         sBuilder.append(cal.get(Calendar.DAY_OF_MONTH));
 
         int month = cal.get(Calendar.MONTH) + 1;
-        if (month < 10)
+        if (month < 10) {
             sBuilder.append("0");
+        }
         sBuilder.append(month);
 
         sBuilder.append(cal.get(Calendar.YEAR));
         sBuilder.append("-");
 
         int hours = cal.get(Calendar.HOUR_OF_DAY);
-        if (hours < 10)
+        if (hours < 10) {
             sBuilder.append("0");
+        }
         sBuilder.append(hours);
         int minutes = cal.get(Calendar.MINUTE);
-        if (minutes < 10)
+        if (minutes < 10) {
             sBuilder.append("0");
+        }
         sBuilder.append(minutes);
         int seconds = cal.get(Calendar.SECOND);
-        if (seconds < 10)
+        if (seconds < 10) {
             sBuilder.append("0");
+        }
         sBuilder.append(seconds);
         return sBuilder.toString();
     }
@@ -183,7 +186,7 @@ public class BackupTask implements Runnable, PropertyConstants {
      * Check whethere there are more backups as allowed to store. When this case
      * is true, it deletes oldest ones
      */
-    private void deleteOldBackups () {
+    private void deleteOldBackups() {
         try {
             //
             File backupDir = new File("backups");
@@ -204,10 +207,10 @@ public class BackupTask implements Runnable, PropertyConstants {
                 long maxModified;
 
                 //remove all newest backups from the list to delete
-                for(int i = 0 ; i < MAX_BACKUPS ; ++i) {
+                for (int i = 0; i < MAX_BACKUPS; ++i) {
                     maxModifiedIndex = 0;
                     maxModified = backups.get(0).lastModified();
-                    for(int j = 1 ; j < backups.size(); ++j) {
+                    for (int j = 1; j < backups.size(); ++j) {
                         File currentFile = backups.get(j);
                         if (currentFile.lastModified() > maxModified) {
                             maxModified = currentFile.lastModified();
@@ -216,12 +219,14 @@ public class BackupTask implements Runnable, PropertyConstants {
                     }
                     backups.remove(maxModifiedIndex);
                 }
+                System.out.println("[BACKUP] Removing the following backups due to age:");
+                System.out.println(Arrays.toString(backups.toArray()));
                 // this are the oldest backups, so delete them
-                for(File backupToDelete : backups)
+                for (File backupToDelete : backups) {
                     backupToDelete.delete();
+                }
             }
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace(System.out);
         }
     }

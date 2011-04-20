@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package backup;
 
 import java.io.File;
@@ -39,28 +38,30 @@ import static io.FileUtils.FILE_SEPARATOR;
 public class Main extends JavaPlugin implements PropertyConstants {
 
     public static PermissionHandler Permissions;
-
     private BackupTask run;
 
     @Override
-    public void onDisable () {
+    public void onDisable() {
     }
 
     @Override
-    public void onEnable () {
+    public void onEnable() {
 
         setupPermissions();
 
         File backupDir = new File("plugins".concat(FILE_SEPARATOR).concat("Backup"));
-        if (!backupDir.exists())
+        if (!backupDir.exists()) {
             backupDir.mkdirs();
-        backupDir = new File ("backups");
-        if (!backupDir.exists())
+        }
+        backupDir = new File("backups");
+        if (!backupDir.exists()) {
             backupDir.mkdirs();
+        }
         backupDir = new File("backups".concat(FILE_SEPARATOR).concat("custom"));
-        if (!backupDir.exists())
+        if (!backupDir.exists()) {
             backupDir.mkdirs();
-        
+        }
+
         // load the properties
         PropertiesSystem pSystem = new PropertiesSystem();
 
@@ -68,41 +69,42 @@ public class Main extends JavaPlugin implements PropertyConstants {
         PluginManager pm = server.getPluginManager();
 
         // the backupTask, which backups the system every X minutes
-        run = new BackupTask(server,pSystem);
+        run = new BackupTask(server, pSystem);
 
         // for manuell backups
-        pm.registerEvent(Type.PLAYER_COMMAND_PREPROCESS, new CommandListener(run,pSystem,this) , Priority.Normal, this);
-        
+        pm.registerEvent(Type.PLAYER_COMMAND_PREPROCESS, new CommandListener(run, pSystem, this), Priority.Normal, this);
+
         if (pSystem.getBooleanProperty(BOOL_BACKUP_ONLY_PLAYER)) {
-            LoginListener ll = new LoginListener(this,pSystem);
+            LoginListener ll = new LoginListener(this, pSystem);
             pm.registerEvent(Type.PLAYER_LOGIN, ll, Priority.Normal, this);
             pm.registerEvent(Type.PLAYER_QUIT, ll, Priority.Normal, this);
         }
         // start the backupTask, which will starts after X minutes and backup after X minutes
         int intervall = pSystem.getIntProperty(INT_BACKUP_INTERVALL);
-        server.getScheduler().scheduleAsyncRepeatingTask(this, run,intervall,intervall);
+        server.getScheduler().scheduleAsyncRepeatingTask(this, run, intervall, intervall);
         System.out.println(this.getDescription().getFullName() + " was sucessfully loaded!");
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         run.setAsManuelBackup();
-        if (args != null && args.length == 1)
+        if (args != null && args.length == 1) {
             run.setBackupName(args[0]);
+        }
         this.getServer().getScheduler().scheduleAsyncDelayedTask(this, run);
 
         return true;
     }
 
     private void setupPermissions() {
-      Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
+        Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
 
-      if (Permissions == null) {
-          if (test != null) {
-              Permissions = ((Permissions)test).getHandler();
-          } else {
-              this.getServer().getLogger().info("[Backup] Permission system not detected, defaulting to OP");
-          }
-      }
-  }
+        if (Permissions == null) {
+            if (test != null) {
+                Permissions = ((Permissions) test).getHandler();
+            } else {
+                this.getServer().getLogger().info("[Backup] Permission system not detected, defaulting to OP");
+            }
+        }
+    }
 }

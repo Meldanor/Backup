@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package backup;
 
 import org.bukkit.Server;
@@ -27,8 +26,8 @@ public class LastBackupTask extends BackupTask {
 
     private Server server = null;
 
-    public LastBackupTask(Server server,PropertiesSystem pSystem ) {
-        super(server,pSystem);
+    public LastBackupTask(Server server, PropertiesSystem pSystem) {
+        super(server, pSystem);
         this.server = server;
     }
 

@@ -14,9 +14,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package backup;
 
+import java.util.Arrays;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,21 +30,16 @@ import static io.FileUtils.FILE_SEPARATOR;
  *
  * @author Kilian Gaertner
  */
-public class PropertiesSystem implements PropertyConstants{
+public class PropertiesSystem implements PropertyConstants {
 
     /** How big is the int value array*/
-    private final int INT_VALUES_SIZE        = 2;
-
-    private final int BOOL_VALUES_SIZE       = 3;
-
-    private final int STRING_VALUES_SIZE     = 3;
-
+    private final int INT_VALUES_SIZE = 2;
+    private final int BOOL_VALUES_SIZE = 3;
+    private final int STRING_VALUES_SIZE = 3;
     /** Stores every int property*/
     private int[] intValues = new int[INT_VALUES_SIZE];
-
     /** Stores every bool property*/
     private boolean[] boolValues = new boolean[BOOL_VALUES_SIZE];
-
     /** Stores every string property */
     private String[] stringValues = new String[STRING_VALUES_SIZE];
 
@@ -70,7 +65,7 @@ public class PropertiesSystem implements PropertyConstants{
      * Load the default configs from the config.ini , stored in the jar
      * @param configFile The configFile, but not in the jar
      */
-    private void createDefaultSettings (File configFile) {
+    private void createDefaultSettings(File configFile) {
         BufferedReader bReader = null;
         BufferedWriter bWriter = null;
         try {
@@ -80,23 +75,22 @@ public class PropertiesSystem implements PropertyConstants{
             String line = "";
             bWriter = new BufferedWriter(new FileWriter(configFile));
             // copy the content
-            while((line = bReader.readLine()) != null) {
+            while ((line = bReader.readLine()) != null) {
                 bWriter.write(line);
                 bWriter.newLine();
             }
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace(System.out);
-        }
-        // so we can be sure, that the streams are really closed
-        finally{
+        } // so we can be sure, that the streams are really closed
+        finally {
             try {
-                if (bReader != null)
+                if (bReader != null) {
                     bReader.close();
-                if (bWriter != null)
+                }
+                if (bWriter != null) {
                     bWriter.close();
-            }
-            catch (Exception e) {
+                }
+            } catch (Exception e) {
                 e.printStackTrace(System.out);
             }
         }
@@ -111,38 +105,45 @@ public class PropertiesSystem implements PropertyConstants{
         try {
             bReader = new BufferedReader(new FileReader(configFile));
             String line = "";
-            while((line = bReader.readLine()) != null) {
-                if (line.startsWith("//"))
+            while ((line = bReader.readLine()) != null) {
+                if (line.startsWith("//")) {
                     continue;
-                if (line.startsWith("BackupIntervall"))
-//                     20 ticks on a server are one second and this crossed with 60 are minutes
-                    intValues[INT_BACKUP_INTERVALL] = Integer.parseInt(line.substring(16)) * 20 * 60;
-                else if (line.startsWith("MaximumBackups"))
-                    intValues[INT_MAX_BACKUPS] = Integer.parseInt(line.substring(15));
-                else if (line.startsWith("OnlyOps"))
-                    boolValues[BOOL_ONLY_OPS] = Boolean.parseBoolean(line.substring(8));
-                else if (line.startsWith("BackupOnlyWithPlayer"))
-                    boolValues[BOOL_BACKUP_ONLY_PLAYER] = Boolean.parseBoolean(line.substring(21));
-                else if (line.startsWith("MessageStartBackup"))
-                    stringValues[STRING_START_BACKUP_MESSAGE] = line.substring(19);
-                else if (line.startsWith("MessageFinishBackup"))
-                    stringValues[STRING_FINISH_BACKUP_MESSAGE] = line.substring(20);
-                else if (line.startsWith("DontBackupWorlds"))
-                    stringValues[STRING_NO_BACKUP_WORLDNAMES] = line.substring(17);
-                else if (line.startsWith("ZIPBackup"))
-                    boolValues[BOOL_ZIP] = Boolean.parseBoolean(line.substring(10));
+                }
+                String[] split = line.split("=");
+                if (split[0].equals("BackupIntervall")) // 20 ticks on a server are one second and this crossed with 60 are minutes
+                {
+                    intValues[INT_BACKUP_INTERVALL] = Integer.parseInt(split[1]) * 20 * 60;
+                } else if (split[0].equals("MaximumBackups")) {
+                    intValues[INT_MAX_BACKUPS] = Integer.parseInt(split[1]);
+                } else if (split[0].equals("OnlyOps")) {
+                    boolValues[BOOL_ONLY_OPS] = Boolean.parseBoolean(split[1]);
+                } else if (split[0].equals("BackupOnlyWithPlayer")) {
+                    boolValues[BOOL_BACKUP_ONLY_PLAYER] = Boolean.parseBoolean(split[1]);
+                } else if (split[0].equals("MessageStartBackup")) {
+                    stringValues[STRING_START_BACKUP_MESSAGE] = split[1];
+                } else if (split[0].equals("MessageFinishBackup")) {
+                    stringValues[STRING_FINISH_BACKUP_MESSAGE] = split[1];
+                } else if (split[0].equals("DontBackupWorlds")) {
+                    stringValues[STRING_NO_BACKUP_WORLDNAMES] = "";
+                    if (split.length == 2) {
+                        stringValues[STRING_NO_BACKUP_WORLDNAMES] = split[1];
+                    }
+                } else if (split[0].equals("ZIPBackup")) {
+                    boolValues[BOOL_ZIP] = Boolean.parseBoolean(split[1]);
+                }
             }
-        }
-        catch(Exception e) {
+            System.out.println(Arrays.toString(boolValues));
+            System.out.println(Arrays.toString(stringValues));
+            System.out.println(Arrays.toString(intValues));
+        } catch (Exception e) {
             e.printStackTrace(System.out);
-        }
-        // so we can be sure, that the streams are really closed
-        finally{
+        } // so we can be sure, that the streams are really closed
+        finally {
             try {
-                if (bReader != null)
+                if (bReader != null) {
                     bReader.close();
-            }
-            catch (Exception e) {
+                }
+            } catch (Exception e) {
                 e.printStackTrace(System.out);
             }
         }

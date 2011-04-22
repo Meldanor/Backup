@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package backup;
 
 import org.bukkit.Server;
@@ -26,13 +27,13 @@ public class LastBackupTask extends BackupTask {
 
     private Server server = null;
 
-    public LastBackupTask(Server server, PropertiesSystem pSystem) {
+    public LastBackupTask (Server server, PropertiesSystem pSystem) {
         super(server, pSystem);
         this.server = server;
     }
 
     @Override
-    public void run() {
+    public void run () {
         if (server.getOnlinePlayers().length <= 0) {
             System.out.println("[BACKUP] Start last backup. When this is done, the server will not run a backup until a player joins the server.");
             super.backup();

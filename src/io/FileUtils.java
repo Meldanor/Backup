@@ -152,7 +152,7 @@ public class FileUtils {
      * @since Commons IO 1.1
      */
     private static void copyDirectory (File srcDir, File destDir,
-                                      boolean preserveFileDate) throws IOException {
+                                       boolean preserveFileDate) throws IOException {
         copyDirectory(srcDir, destDir, null, preserveFileDate);
     }
 
@@ -203,7 +203,7 @@ public class FileUtils {
      * @since Commons IO 1.4
      */
     private static void copyDirectory (File srcDir, File destDir,
-                                      FileFilter filter, boolean preserveFileDate) throws IOException {
+                                       FileFilter filter, boolean preserveFileDate) throws IOException {
         if (srcDir == null)
             throw new NullPointerException("Source must not be null");
         if (destDir == null)
@@ -251,9 +251,8 @@ public class FileUtils {
             if (destDir.isDirectory() == false)
                 throw new IOException("Destination '" + destDir + "' exists but is not a directory");
         }
-        else
-            if (destDir.mkdirs() == false)
-                throw new IOException("Destination '" + destDir + "' directory cannot be created");
+        else if (destDir.mkdirs() == false)
+            throw new IOException("Destination '" + destDir + "' directory cannot be created");
         if (destDir.canWrite() == false)
             throw new IOException("Destination '" + destDir + "' cannot be written to");
         for (File file : files) {
@@ -421,14 +420,13 @@ public class FileUtils {
             throw new IOException("Failed to list contents of " + directory);
 
         IOException exception = null;
-        for (File file : files) {
+        for (File file : files)
             try {
                 forceDelete(file);
             }
             catch (IOException ioe) {
                 exception = ioe;
             }
-        }
 
         if (null != exception)
             throw exception;
@@ -502,7 +500,6 @@ public class FileUtils {
     private static boolean isSystemWindows () {
         return SYSTEM_SEPARATOR == WINDOWS_SEPARATOR;
     }
-
     public final static String LINE_SEPARATOR = System.getProperty("line.separator");
     public final static String FILE_SEPARATOR = System.getProperty("file.separator");
 
@@ -542,5 +539,4 @@ public class FileUtils {
             e.printStackTrace(System.out);
         }
     }
-
 }

@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package backup;
 
 import java.io.File;
@@ -41,26 +42,23 @@ public class Main extends JavaPlugin implements PropertyConstants {
     private BackupTask run;
 
     @Override
-    public void onDisable() {
+    public void onDisable () {
     }
 
     @Override
-    public void onEnable() {
+    public void onEnable () {
 
         setupPermissions();
 
         File backupDir = new File("plugins".concat(FILE_SEPARATOR).concat("Backup"));
-        if (!backupDir.exists()) {
+        if (!backupDir.exists())
             backupDir.mkdirs();
-        }
         backupDir = new File("backups");
-        if (!backupDir.exists()) {
+        if (!backupDir.exists())
             backupDir.mkdirs();
-        }
         backupDir = new File("backups".concat(FILE_SEPARATOR).concat("custom"));
-        if (!backupDir.exists()) {
+        if (!backupDir.exists())
             backupDir.mkdirs();
-        }
 
         // load the properties
         PropertiesSystem pSystem = new PropertiesSystem();
@@ -86,25 +84,22 @@ public class Main extends JavaPlugin implements PropertyConstants {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand (CommandSender sender, Command command, String label, String[] args) {
         run.setAsManuelBackup();
-        if (args != null && args.length == 1) {
+        if (args != null && args.length == 1)
             run.setBackupName(args[0]);
-        }
         this.getServer().getScheduler().scheduleAsyncDelayedTask(this, run);
 
         return true;
     }
 
-    private void setupPermissions() {
+    private void setupPermissions () {
         Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
 
-        if (Permissions == null) {
-            if (test != null) {
+        if (Permissions == null)
+            if (test != null)
                 Permissions = ((Permissions) test).getHandler();
-            } else {
+            else
                 this.getServer().getLogger().info("[Backup] Permission system not detected, defaulting to OP");
-            }
-        }
     }
 }

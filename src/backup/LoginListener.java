@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package backup;
 
 import org.bukkit.Server;
@@ -31,13 +32,13 @@ public class LoginListener extends PlayerListener implements PropertyConstants {
     private PropertiesSystem pSystem;
     private Plugin plugin;
 
-    public LoginListener(Plugin plugin, PropertiesSystem pSystem) {
+    public LoginListener (Plugin plugin, PropertiesSystem pSystem) {
         this.pSystem = pSystem;
         this.plugin = plugin;
     }
 
     @Override
-    public void onPlayerLogin(PlayerLoginEvent event) {
+    public void onPlayerLogin (PlayerLoginEvent event) {
         Player player = event.getPlayer();
         Server server = player.getServer();
         if (taskID != -2 && server.getOnlinePlayers().length == 1) {
@@ -48,7 +49,7 @@ public class LoginListener extends PlayerListener implements PropertyConstants {
     }
 
     @Override
-    public void onPlayerQuit(PlayerQuitEvent event) {
+    public void onPlayerQuit (PlayerQuitEvent event) {
         Player player = event.getPlayer();
         Server server = player.getServer();
         if (server.getOnlinePlayers().length <= 1) {

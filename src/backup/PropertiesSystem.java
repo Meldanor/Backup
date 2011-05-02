@@ -17,7 +17,7 @@
 
 package backup;
 
-import java.util.Arrays;
+import org.bukkit.plugin.Plugin;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -35,7 +35,7 @@ public class PropertiesSystem implements PropertyConstants {
 
     /** How big is the int value array*/
     private final int INT_VALUES_SIZE = 2;
-    private final int BOOL_VALUES_SIZE = 3;
+    private final int BOOL_VALUES_SIZE = 4;
     private final int STRING_VALUES_SIZE = 3;
     /** Stores every int property*/
     private int[] intValues = new int[INT_VALUES_SIZE];
@@ -48,7 +48,7 @@ public class PropertiesSystem implements PropertyConstants {
      * When constructed all properties are loaded. When no config.ini exists, the
      * default values are used
      */
-    public PropertiesSystem () {
+    public PropertiesSystem (Plugin plugin) {
         StringBuilder sBuilder = new StringBuilder("plugins");
         sBuilder.append(FILE_SEPARATOR);
         sBuilder.append("Backup");
@@ -59,7 +59,7 @@ public class PropertiesSystem implements PropertyConstants {
             System.out.println("[Backup] couldn't find the config, create a default one!");
             createDefaultSettings(configFile);
         }
-        loadProperties(configFile);
+        loadProperties(configFile, plugin);
     }
 
     /**
@@ -101,11 +101,12 @@ public class PropertiesSystem implements PropertyConstants {
      * Load the properties from the config.ini
      * @param configFile The config.ini in the servers dir
      */
-    private void loadProperties (File configFile) {
+    private void loadProperties (File configFile, Plugin plugin) {
         BufferedReader bReader = null;
         try {
             bReader = new BufferedReader(new FileReader(configFile));
             String line = "";
+            String version = null;
             while ((line = bReader.readLine()) != null) {
                 if (line.startsWith("//"))
                     continue;
@@ -129,10 +130,13 @@ public class PropertiesSystem implements PropertyConstants {
                 }
                 else if (split[0].equals("ZIPBackup"))
                     boolValues[BOOL_ZIP] = Boolean.parseBoolean(split[1]);
+                else if (split[0].equals("StoreAllInOne"))
+                    boolValues[BOOL_STORE_ALL_ZIP] = Boolean.parseBoolean(split[1]);
+                else if (split[0].equals("Version"))
+                    version = split[1];
             }
-            System.out.println(Arrays.toString(boolValues));
-            System.out.println(Arrays.toString(stringValues));
-            System.out.println(Arrays.toString(intValues));
+            if (version == null || !version.equals(plugin.getDescription().getVersion()))
+                System.out.println("[BACKUP] Your config file is outdated! Please delete your config.ini and the newest will be created!");
         }
         catch (Exception e) {
             e.printStackTrace(System.out);

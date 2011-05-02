@@ -59,9 +59,8 @@ public class Main extends JavaPlugin implements PropertyConstants {
         backupDir = new File("backups".concat(FILE_SEPARATOR).concat("custom"));
         if (!backupDir.exists())
             backupDir.mkdirs();
-
         // load the properties
-        PropertiesSystem pSystem = new PropertiesSystem();
+        PropertiesSystem pSystem = new PropertiesSystem(this);
 
         Server server = getServer();
         PluginManager pm = server.getPluginManager();

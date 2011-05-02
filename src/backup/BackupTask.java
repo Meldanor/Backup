@@ -80,8 +80,10 @@ public class BackupTask implements Runnable, PropertyConstants {
 
         // the messages
         String startBackupMessage = pSystem.getStringProperty(STRING_START_BACKUP_MESSAGE);
-        System.out.println(startBackupMessage);
-        server.broadcastMessage(startBackupMessage);
+        if (startBackupMessage != null && !startBackupMessage.replaceAll(" ","").isEmpty()) {
+            System.out.println(startBackupMessage);
+            server.broadcastMessage(startBackupMessage);
+        }
         // a hack like methode to send the console command for disabling every world save
         ConsoleCommandSender ccs = new ConsoleCommandSender(server);
         server.dispatchCommand(ccs, "save-all");
@@ -134,8 +136,10 @@ public class BackupTask implements Runnable, PropertyConstants {
         server.dispatchCommand(ccs, "save-on");
         // the messages
         String completedBackupMessage = pSystem.getStringProperty(STRING_FINISH_BACKUP_MESSAGE);
-        server.broadcastMessage(completedBackupMessage);
-        System.out.println(completedBackupMessage);
+        if (completedBackupMessage != null && !completedBackupMessage.replaceAll(" ","").isEmpty()) {
+            server.broadcastMessage(completedBackupMessage);
+            System.out.println(completedBackupMessage);
+        }
         // check whether there are old backups to delete
         deleteOldBackups();
         backupName = null;

@@ -35,7 +35,7 @@ public class PropertiesSystem implements PropertyConstants {
 
     /** How big is the int value array*/
     private final int INT_VALUES_SIZE       = 2;
-    private final int BOOL_VALUES_SIZE      = 4;
+    private final int BOOL_VALUES_SIZE      = 5;
     private final int STRING_VALUES_SIZE    = 4;
     /** Stores every int property*/
     private int[] intValues = new int[INT_VALUES_SIZE];
@@ -111,14 +111,23 @@ public class PropertiesSystem implements PropertyConstants {
                 if (line.startsWith("//"))
                     continue;
                 String[] split = line.split("=");
+                //------------------------------------------------------------//
                 if (split[0].equals("BackupIntervall"))
                     intValues[INT_BACKUP_INTERVALL] = Integer.parseInt(split[1]) * 20 * 60;
                 else if (split[0].equals("MaximumBackups"))
                     intValues[INT_MAX_BACKUPS] = Integer.parseInt(split[1]);
                 else if (split[0].equals("OnlyOps"))
+                //------------------------------------------------------------//
                     boolValues[BOOL_ONLY_OPS] = Boolean.parseBoolean(split[1]);
                 else if (split[0].equals("BackupOnlyWithPlayer"))
-                    boolValues[BOOL_BACKUP_ONLY_PLAYER] = Boolean.parseBoolean(split[1]);
+                    boolValues[BOOL_BACKUP_ONLY_PLAYER] = Boolean.parseBoolean(split[1]);                
+                else if (split[0].equals("ZIPBackup"))
+                    boolValues[BOOL_ZIP] = Boolean.parseBoolean(split[1]);
+                else if (split[0].equals("StoreAllInOne"))
+                    boolValues[BOOL_STORE_ALL_ZIP] = Boolean.parseBoolean(split[1]);
+                else if (split[0].equals("EnableAutoSave"))
+                    boolValues[BOOL_ACTIVATE_AUTOSAVE] = Boolean.parseBoolean(split[1]);
+                //------------------------------------------------------------//
                 else if (split[0].equals("MessageStartBackup"))
                     stringValues[STRING_START_BACKUP_MESSAGE] = split[1];
                 else if (split[0].equals("MessageFinishBackup"))
@@ -128,12 +137,9 @@ public class PropertiesSystem implements PropertyConstants {
                     if (split.length == 2)
                         stringValues[STRING_NO_BACKUP_WORLDNAMES] = split[1];
                 }
-                else if (split[0].equals("ZIPBackup"))
-                    boolValues[BOOL_ZIP] = Boolean.parseBoolean(split[1]);
-                else if (split[0].equals("StoreAllInOne"))
-                    boolValues[BOOL_STORE_ALL_ZIP] = Boolean.parseBoolean(split[1]);
                 else if (split[0].equals("CustomDateFormat"))
                     stringValues[STRING_CUSTOM_DATE_FORMAT] = split[1];
+//----------------------------------------------------------------------------//
                 else if (split[0].equals("Version"))
                     version = split[1];
             }

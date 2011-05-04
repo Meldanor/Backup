@@ -87,15 +87,12 @@ public class BackupTask implements Runnable, PropertyConstants {
         // a hack like methode to send the console command for disabling every world save
         ConsoleCommandSender ccs = new ConsoleCommandSender(server);
         server.dispatchCommand(ccs, "save-all");
-        server.dispatchCommand(ccs, "save-off");
+        boolean activateAutosave = pSystem.getBooleanProperty(BOOL_ACTIVATE_AUTOSAVE);
+        if (activateAutosave)
+            server.dispatchCommand(ccs, "save-off");
         // the Player Position are getting stored
         server.savePlayers();
-
-        String[] worldNames = pSystem.getStringProperty(STRING_NO_BACKUP_WORLDNAMES).split(";");
-        if (worldNames.length > 0 && !worldNames[0].isEmpty()) {
-            System.out.println("[BACKUP] Backup is disabled for the following world(s):");
-            System.out.println(Arrays.toString(worldNames));
-        }
+        String[] ignoredWorlds = getToIgnoreWorlds();
         try {
             // iterate through every world and zip every one
             boolean hasToZIP = pSystem.getBooleanProperty(BOOL_ZIP);
@@ -104,8 +101,8 @@ public class BackupTask implements Runnable, PropertyConstants {
             outter:
                 for (World world : server.getWorlds()) {
                     inner:
-                        for (String worldName : worldNames)
-                            if (worldName.equalsIgnoreCase(world.getName()))
+                        for (String ignoredWorld : ignoredWorlds)
+                            if (ignoredWorld.equalsIgnoreCase(world.getName()))
                                 continue outter;
                     String backupDir = "backups".concat(FILE_SEPARATOR).concat(world.getName());
                     if (!hasToZIP)
@@ -132,8 +129,9 @@ public class BackupTask implements Runnable, PropertyConstants {
         catch (Exception e) {
             e.printStackTrace(System.out);
         }
-        // enable the world save
-        server.dispatchCommand(ccs, "save-on");
+        // enable the world save, if this is the wish of the admin
+        if (activateAutosave)
+            server.dispatchCommand(ccs, "save-on");
         // the messages
         String completedBackupMessage = pSystem.getStringProperty(STRING_FINISH_BACKUP_MESSAGE);
         if (completedBackupMessage != null && !completedBackupMessage.trim().isEmpty()) {
@@ -144,6 +142,15 @@ public class BackupTask implements Runnable, PropertyConstants {
         deleteOldBackups();
         backupName = null;
         isManuelBackup = false;
+    }
+
+    private String[] getToIgnoreWorlds () {
+        String[] worldNames = pSystem.getStringProperty(STRING_NO_BACKUP_WORLDNAMES).split(";");
+        if (worldNames.length > 0 && !worldNames[0].isEmpty()) {
+            System.out.println("[BACKUP] Backup is disabled for the following world(s):");
+            System.out.println(Arrays.toString(worldNames));
+        }
+        return worldNames;
     }
 
     /**

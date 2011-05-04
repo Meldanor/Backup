@@ -41,7 +41,7 @@ public class LoginListener extends PlayerListener implements PropertyConstants {
     public void onPlayerLogin (PlayerLoginEvent event) {
         Player player = event.getPlayer();
         Server server = player.getServer();
-        if (taskID != -2 && server.getOnlinePlayers().length == 1) {
+        if (taskID != -2 && server.getOnlinePlayers().length == 0) {
             server.getScheduler().cancelTask(taskID);
             System.out.println("[BACKUP] Stopped last backup, start with normal backup cyclus!");
             taskID = -2;

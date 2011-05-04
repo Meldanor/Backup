@@ -44,4 +44,6 @@ public interface PropertyConstants {
      * to split them firstly.
      */
     public final int STRING_NO_BACKUP_WORLDNAMES = 2;
+    /** the index for the custom date format string (optional) */
+    public final int STRING_CUSTOM_DATE_FORMAT      = 3;
 }

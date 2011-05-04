@@ -34,9 +34,9 @@ import static io.FileUtils.FILE_SEPARATOR;
 public class PropertiesSystem implements PropertyConstants {
 
     /** How big is the int value array*/
-    private final int INT_VALUES_SIZE = 2;
-    private final int BOOL_VALUES_SIZE = 4;
-    private final int STRING_VALUES_SIZE = 3;
+    private final int INT_VALUES_SIZE       = 2;
+    private final int BOOL_VALUES_SIZE      = 4;
+    private final int STRING_VALUES_SIZE    = 4;
     /** Stores every int property*/
     private int[] intValues = new int[INT_VALUES_SIZE];
     /** Stores every bool property*/
@@ -132,6 +132,8 @@ public class PropertiesSystem implements PropertyConstants {
                     boolValues[BOOL_ZIP] = Boolean.parseBoolean(split[1]);
                 else if (split[0].equals("StoreAllInOne"))
                     boolValues[BOOL_STORE_ALL_ZIP] = Boolean.parseBoolean(split[1]);
+                else if (split[0].equals("CustomDateFormat"))
+                    stringValues[STRING_CUSTOM_DATE_FORMAT] = split[1];
                 else if (split[0].equals("Version"))
                     version = split[1];
             }

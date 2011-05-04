@@ -80,7 +80,7 @@ public class BackupTask implements Runnable, PropertyConstants {
 
         // the messages
         String startBackupMessage = pSystem.getStringProperty(STRING_START_BACKUP_MESSAGE);
-        if (startBackupMessage != null && !startBackupMessage.replaceAll(" ","").isEmpty()) {
+        if (startBackupMessage != null && !startBackupMessage.trim().isEmpty()) {
             System.out.println(startBackupMessage);
             server.broadcastMessage(startBackupMessage);
         }
@@ -136,7 +136,7 @@ public class BackupTask implements Runnable, PropertyConstants {
         server.dispatchCommand(ccs, "save-on");
         // the messages
         String completedBackupMessage = pSystem.getStringProperty(STRING_FINISH_BACKUP_MESSAGE);
-        if (completedBackupMessage != null && !completedBackupMessage.replaceAll(" ","").isEmpty()) {
+        if (completedBackupMessage != null && !completedBackupMessage.trim().isEmpty()) {
             server.broadcastMessage(completedBackupMessage);
             System.out.println(completedBackupMessage);
         }
@@ -147,35 +147,23 @@ public class BackupTask implements Runnable, PropertyConstants {
     }
 
     /**
-     * @return String representing the current Date in the format
-     * <br> DAY MONTH YEAR-HOUR MINUTE SECOND
+     * @return String representing the current Date in configured format
      */
     private String getDate () {
-        StringBuilder sBuilder = new StringBuilder();
+
         Calendar cal = Calendar.getInstance();
-        sBuilder.append(cal.get(Calendar.DAY_OF_MONTH));
-
-        int month = cal.get(Calendar.MONTH) + 1;
-        if (month < 10)
-            sBuilder.append("0");
-        sBuilder.append(month);
-
-        sBuilder.append(cal.get(Calendar.YEAR));
-        sBuilder.append("-");
-
-        int hours = cal.get(Calendar.HOUR_OF_DAY);
-        if (hours < 10)
-            sBuilder.append("0");
-        sBuilder.append(hours);
-        int minutes = cal.get(Calendar.MINUTE);
-        if (minutes < 10)
-            sBuilder.append("0");
-        sBuilder.append(minutes);
-        int seconds = cal.get(Calendar.SECOND);
-        if (seconds < 10)
-            sBuilder.append("0");
-        sBuilder.append(seconds);
-        return sBuilder.toString();
+        String formattedDate = new String();
+        // Java string (and date) formatting:
+        // http://download.oracle.com/javase/1.5.0/docs/api/java/util/Formatter.html#syntax
+        try {
+            formattedDate = String.format(pSystem.getStringProperty(STRING_CUSTOM_DATE_FORMAT),cal);
+        }
+        catch (Exception e) {
+            System.out.println("[BACKUP] Error formatting date, bad format string! Formatting date with default format string...");
+            formattedDate = String.format("%1$td%1$tm%1$tY-%1$tH%1$tM%1$tS", cal);
+            System.out.println(e);
+        }
+        return formattedDate;
     }
 
     /**

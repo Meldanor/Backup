@@ -73,6 +73,9 @@ public class BackupTask implements Runnable, PropertyConstants {
             String worldName = worldsToBackup.removeFirst();
             FileUtils.copyDirectory(new File(worldName), new File(backupDirName.concat(FILE_SEPARATOR).concat(worldName)));
         }
+        if (pSystem.getBooleanProperty(BOOL_BACKUP_PLUGINS))
+            FileUtils.copyDirectory(new File("plugins"), new File(backupDirName.concat(FILE_SEPARATOR).concat("plugins")));
+        
         if (pSystem.getBooleanProperty(BOOL_ZIP)) {
             FileUtils.zipDir(backupDirName, backupDirName.concat(".zip"));
             FileUtils.deleteDirectory(backupDir);

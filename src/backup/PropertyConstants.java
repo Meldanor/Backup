@@ -24,28 +24,30 @@ package backup;
 public interface PropertyConstants {
 
     /** the index for the intervall for save intervall */
-    public final int INT_BACKUP_INTERVALL =         0;
+    public final int INT_BACKUP_INTERVALL       = 0;
     /** the index for the maximum count of backups */
-    public final int INT_MAX_BACKUPS =              1;
+    public final int INT_MAX_BACKUPS            = 1;
 //----------------------------------------------------------------------------//
     /** the index for the only ops can run manuell backups property*/
-    public final int BOOL_ONLY_OPS =                0;
+    public final int BOOL_ONLY_OPS              = 0;
     /** the index for the only run a backup when player are online property*/
-    public final int BOOL_BACKUP_ONLY_PLAYER =      1;
+    public final int BOOL_BACKUP_ONLY_PLAYER    = 1;
     /** the index whether the server has to zip or just store property */
-    public final int BOOL_ZIP =                     2;
+    public final int BOOL_ZIP                   = 2;
     /** Enable the autosave function after the backup.*/
-    public final int BOOL_ACTIVATE_AUTOSAVE =       3;
+    public final int BOOL_ACTIVATE_AUTOSAVE     = 3;
+    /** Store the plugin folder also in the backup */
+    public final int BOOL_BACKUP_PLUGINS        = 4;
 //----------------------------------------------------------------------------//
     /** the index for the starting backup message */
-    public final int STRING_START_BACKUP_MESSAGE =  0;
+    public final int STRING_START_BACKUP_MESSAGE    = 0;
     /** the index for the starting backup message */
-    public final int STRING_FINISH_BACKUP_MESSAGE = 1;
+    public final int STRING_FINISH_BACKUP_MESSAGE   = 1;
     /** the index for the world that shouldn't get backuped.
      *  This is one line and each world name is seperated by a ; , so you have
      * to split them firstly.
      */
-    public final int STRING_NO_BACKUP_WORLDNAMES =  2;
+    public final int STRING_NO_BACKUP_WORLDNAMES    = 2;
     /** the index for the custom date format string (optional) */
-    public final int STRING_CUSTOM_DATE_FORMAT   =  3;
+    public final int STRING_CUSTOM_DATE_FORMAT      = 3;
 }

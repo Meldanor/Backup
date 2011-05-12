@@ -366,39 +366,6 @@ public class FileUtils {
     }
 
     /**
-     * Deletes a file, never throwing an exception. If file is a directory, delete it and all sub-directories.
-     * <p>
-     * The difference between File.delete() and this method are:
-     * <ul>
-     * <li>A directory to be deleted does not have to be empty.</li>
-     * <li>No exceptions are thrown when a file or directory cannot be deleted.</li>
-     * </ul>
-     *
-     * @param file  file or directory to delete, can be <code>null</code>
-     * @return <code>true</code> if the file or directory was deleted, otherwise
-     * <code>false</code>
-     *
-     * @since Commons IO 1.4
-     */
-    private static boolean deleteQuietly (File file) {
-        if (file == null)
-            return false;
-        try {
-            if (file.isDirectory())
-                cleanDirectory(file);
-        }
-        catch (Exception ignored) {
-        }
-
-        try {
-            return file.delete();
-        }
-        catch (Exception ignored) {
-            return false;
-        }
-    }
-
-    /**
      * Cleans a directory without deleting it.
      *
      * @param directory directory to clean
@@ -503,40 +470,53 @@ public class FileUtils {
     public final static String LINE_SEPARATOR = System.getProperty("line.separator");
     public final static String FILE_SEPARATOR = System.getProperty("file.separator");
 
-    public static void zipDirectory (String directoryName, String targetName) {
-        try {
-            ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(targetName + ".zip"));
-            zipDir(directoryName, zos);
-            zos.close();
-        }
-        catch (Exception e) {
-            e.printStackTrace(System.out);
-        }
+    /**
+     * Zip up a directory
+     *
+     * @param directory
+     * @param zipName
+     * @throws IOException
+     */
+    public static void zipDir(String directory, String zipName) throws IOException {
+        // create a ZipOutputStream to zip the data to
+        ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipName));
+        zipDir(directory, zos, "");
+        // close the stream
+        closeQuietly(zos);
     }
 
-    private static void zipDir (String dir2zip, ZipOutputStream zos) {
-        try {
-            File zipDir = new File(dir2zip);
-
-            String[] dirList = zipDir.list();
-            byte[] readBuffer = new byte[2156];
-            int bytesIn = 0;
-            for (int i = 0 ; i < dirList.length ; i++) {
-                File f = new File(zipDir, dirList[i]);
-                if (f.isDirectory()) {
-                    zipDir(f.getPath(), zos);
-                    continue;
-                }
-                FileInputStream fis = new FileInputStream(f);
-                ZipEntry anEntry = new ZipEntry(f.getPath().substring(8));
-                zos.putNextEntry(anEntry);
-                while ((bytesIn = fis.read(readBuffer)) != -1)
+    /**
+     * Zip up a directory path
+     * @param directory
+     * @param zos
+     * @param path
+     * @throws IOException
+     */
+    private static void zipDir(String directory, ZipOutputStream zos, String path) throws IOException {
+        File zipDir = new File(directory);
+        // get a listing of the directory content
+        String[] dirList = zipDir.list();
+        byte[] readBuffer = new byte[2156];
+        int bytesIn = 0;
+        // loop through dirList, and zip the files
+        for (int i = 0; i < dirList.length; ++i) {
+            File f = new File(zipDir, dirList[i]);
+            if (f.isDirectory()) {
+                zipDir(f.getPath(), zos, path.concat(f.getName()).concat(FILE_SEPARATOR));
+                continue;
+            }
+            FileInputStream fis = new FileInputStream(f);
+            try {
+                zos.putNextEntry(new ZipEntry(path.concat(f.getName())));
+                bytesIn = fis.read(readBuffer);
+                while (bytesIn != -1) {
                     zos.write(readBuffer, 0, bytesIn);
-                fis.close();
+                    bytesIn = fis.read(readBuffer);
+                }
+            } finally {
+                closeQuietly(fis);
             }
         }
-        catch (Exception e) {
-            e.printStackTrace(System.out);
-        }
+        
     }
 }

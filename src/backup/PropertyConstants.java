@@ -34,10 +34,8 @@ public interface PropertyConstants {
     public final int BOOL_BACKUP_ONLY_PLAYER =      1;
     /** the index whether the server has to zip or just store property */
     public final int BOOL_ZIP =                     2;
-    /** the index whther all backups shall be stored in own zip */
-    public final int BOOL_STORE_ALL_ZIP =           3;
     /** Enable the autosave function after the backup.*/
-    public final int BOOL_ACTIVATE_AUTOSAVE =         4;
+    public final int BOOL_ACTIVATE_AUTOSAVE =       3;
 //----------------------------------------------------------------------------//
     /** the index for the starting backup message */
     public final int STRING_START_BACKUP_MESSAGE =  0;

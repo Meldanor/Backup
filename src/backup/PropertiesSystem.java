@@ -35,7 +35,7 @@ public class PropertiesSystem implements PropertyConstants {
 
     /** How big is the int value array*/
     private final int INT_VALUES_SIZE       = 2;
-    private final int BOOL_VALUES_SIZE      = 5;
+    private final int BOOL_VALUES_SIZE      = 4;
     private final int STRING_VALUES_SIZE    = 4;
     /** Stores every int property*/
     private int[] intValues = new int[INT_VALUES_SIZE];
@@ -123,8 +123,6 @@ public class PropertiesSystem implements PropertyConstants {
                     boolValues[BOOL_BACKUP_ONLY_PLAYER] = Boolean.parseBoolean(split[1]);                
                 else if (split[0].equals("ZIPBackup"))
                     boolValues[BOOL_ZIP] = Boolean.parseBoolean(split[1]);
-                else if (split[0].equals("StoreAllInOne"))
-                    boolValues[BOOL_STORE_ALL_ZIP] = Boolean.parseBoolean(split[1]);
                 else if (split[0].equals("EnableAutoSave"))
                     boolValues[BOOL_ACTIVATE_AUTOSAVE] = Boolean.parseBoolean(split[1]);
                 //------------------------------------------------------------//

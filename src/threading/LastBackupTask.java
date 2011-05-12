@@ -15,15 +15,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package backup;
+package threading;
 
+import backup.PropertiesSystem;
 import org.bukkit.Server;
 
 /**
  *
  * @author Kilian Gaertner
  */
-public class LastBackupTask extends BackupTask {
+public class LastBackupTask extends PrepareBackupTask {
 
     private Server server = null;
 
@@ -36,7 +37,7 @@ public class LastBackupTask extends BackupTask {
     public void run () {
         if (server.getOnlinePlayers().length <= 0) {
             System.out.println("[BACKUP] Start last backup. When this is done, the server will not run a backup until a player joins the server.");
-            super.backup();
+            super.prepareBackup();
         }
     }
 }

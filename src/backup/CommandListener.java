@@ -17,10 +17,13 @@
 
 package backup;
 
+import threading.PrepareBackupTask;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.plugin.Plugin;
+
 
 /**
  * For manual backups
@@ -28,11 +31,11 @@ import org.bukkit.plugin.Plugin;
  */
 public class CommandListener extends PlayerListener implements PropertyConstants {
 
-    private BackupTask backupTask = null;
+    private PrepareBackupTask backupTask = null;
     private PropertiesSystem pSystem = null;
     private final Plugin plugin;
 
-    public CommandListener (BackupTask backupTask, PropertiesSystem pSystem, Plugin plugin) {
+    public CommandListener (PrepareBackupTask backupTask, PropertiesSystem pSystem, Plugin plugin) {
         this.backupTask = backupTask;
         this.pSystem = pSystem;
         this.plugin = plugin;
@@ -55,11 +58,11 @@ public class CommandListener extends PlayerListener implements PropertyConstants
             }
             if (split.length == 1) {
                 backupTask.setAsManuelBackup();
-                player.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, backupTask);
+                player.getServer().getScheduler().scheduleSyncDelayedTask(plugin, backupTask);
             }
             else if (split.length == 2) {
                 backupTask.setBackupName(split[1]);
-                player.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, backupTask);
+                player.getServer().getScheduler().scheduleSyncDelayedTask(plugin, backupTask);
             }
             else
                 player.sendMessage("/backup OPTIONALNAME");

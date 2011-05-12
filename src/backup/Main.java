@@ -17,6 +17,7 @@
 
 package backup;
 
+import threading.PrepareBackupTask;
 import java.io.File;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -39,7 +40,7 @@ import static io.FileUtils.FILE_SEPARATOR;
 public class Main extends JavaPlugin implements PropertyConstants {
 
     public static PermissionHandler Permissions;
-    private BackupTask run;
+    private PrepareBackupTask run;
 
     @Override
     public void onDisable () {
@@ -66,7 +67,7 @@ public class Main extends JavaPlugin implements PropertyConstants {
         PluginManager pm = server.getPluginManager();
 
         // the backupTask, which backups the system every X minutes
-        run = new BackupTask(server, pSystem);
+        run = new PrepareBackupTask(server, pSystem);
 
         // for manuell backups
         pm.registerEvent(Type.PLAYER_COMMAND_PREPROCESS, new CommandListener(run, pSystem, this), Priority.Normal, this);
@@ -78,7 +79,7 @@ public class Main extends JavaPlugin implements PropertyConstants {
         }
         // start the backupTask, which will starts after X minutes and backup after X minutes
         int intervall = pSystem.getIntProperty(INT_BACKUP_INTERVALL);
-        server.getScheduler().scheduleAsyncRepeatingTask(this, run, intervall, intervall);
+        server.getScheduler().scheduleSyncRepeatingTask(this, run, intervall, intervall);
         System.out.println(this.getDescription().getFullName() + " was sucessfully loaded!");
     }
 
@@ -87,7 +88,7 @@ public class Main extends JavaPlugin implements PropertyConstants {
         run.setAsManuelBackup();
         if (args != null && args.length == 1)
             run.setBackupName(args[0]);
-        this.getServer().getScheduler().scheduleAsyncDelayedTask(this, run);
+        this.getServer().getScheduler().scheduleSyncDelayedTask(this, run);
 
         return true;
     }

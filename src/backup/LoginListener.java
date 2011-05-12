@@ -17,6 +17,7 @@
 
 package backup;
 
+import threading.LastBackupTask;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.*;
@@ -55,7 +56,7 @@ public class LoginListener extends PlayerListener implements PropertyConstants {
         if (server.getOnlinePlayers().length <= 1) {
             int intervall = pSystem.getIntProperty(INT_BACKUP_INTERVALL);
             System.out.println("[BACKUP] Initiate a last backup because the last player left. It will start to backup in " + (intervall / 1200) + " minutes when no player will have connected in this time.");
-            taskID = server.getScheduler().scheduleAsyncDelayedTask(plugin, new LastBackupTask(server, pSystem), intervall);
+            taskID = server.getScheduler().scheduleSyncDelayedTask(plugin, new LastBackupTask(server, pSystem), intervall);
         }
     }
 }

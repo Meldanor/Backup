@@ -62,16 +62,19 @@ public class BackupTask implements Runnable, PropertyConstants {
     }
 
     public void backup() throws Exception {
-        String backupDirName = "backups".concat(FILE_SEPARATOR);
+        String backupDirName = pSystem.getStringProperty(STRING_BACKUP_FOLDER).concat(FILE_SEPARATOR);
         if (backupName != null)
             backupDirName = backupDirName.concat("custom").concat(FILE_SEPARATOR).concat(backupName);
         else
             backupDirName = backupDirName.concat(getDate());
         File backupDir = new File(backupDirName);
         backupDir.mkdir();
+        boolean summarizeContent = pSystem.getBooleanProperty(BOOL_SUMMARIZE_CONTENT);
         while (!worldsToBackup.isEmpty()) {
             String worldName = worldsToBackup.removeFirst();
             FileUtils.copyDirectory(new File(worldName), new File(backupDirName.concat(FILE_SEPARATOR).concat(worldName)));
+            if (pSystem.getBooleanProperty(BOOL_SUMMARIZE_CONTENT));
+                // TODO : Implement the option with summarizing the content;
         }
         if (pSystem.getBooleanProperty(BOOL_BACKUP_PLUGINS))
             FileUtils.copyDirectory(new File("plugins"), new File(backupDirName.concat(FILE_SEPARATOR).concat("plugins")));

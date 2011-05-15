@@ -35,8 +35,8 @@ public class PropertiesSystem implements PropertyConstants {
 
     /** How big is the int value array*/
     private final int INT_VALUES_SIZE       = 2;
-    private final int BOOL_VALUES_SIZE      = 5;
-    private final int STRING_VALUES_SIZE    = 4;
+    private final int BOOL_VALUES_SIZE      = 6;
+    private final int STRING_VALUES_SIZE    = 5;
     /** Stores every int property*/
     private int[] intValues = new int[INT_VALUES_SIZE];
     /** Stores every bool property*/
@@ -116,8 +116,8 @@ public class PropertiesSystem implements PropertyConstants {
                     intValues[INT_BACKUP_INTERVALL] = Integer.parseInt(split[1]) * 20 * 60;
                 else if (split[0].equals("MaximumBackups"))
                     intValues[INT_MAX_BACKUPS] = Integer.parseInt(split[1]);
-                else if (split[0].equals("OnlyOps"))
                 //------------------------------------------------------------//
+                else if (split[0].equals("OnlyOps"))
                     boolValues[BOOL_ONLY_OPS] = Boolean.parseBoolean(split[1]);
                 else if (split[0].equals("BackupOnlyWithPlayer"))
                     boolValues[BOOL_BACKUP_ONLY_PLAYER] = Boolean.parseBoolean(split[1]);                
@@ -127,6 +127,8 @@ public class PropertiesSystem implements PropertyConstants {
                     boolValues[BOOL_ACTIVATE_AUTOSAVE] = Boolean.parseBoolean(split[1]);
                 else if (split[0].equals("BackupPluginDIR"))
                     boolValues[BOOL_BACKUP_PLUGINS] = Boolean.parseBoolean(split[1]);
+                else if (split[0].equals("SummarizeBackupContent"))
+                    boolValues[BOOL_SUMMARIZE_CONTENT] = Boolean.parseBoolean(split[1]);
                 //------------------------------------------------------------//
                 else if (split[0].equals("MessageStartBackup"))
                     stringValues[STRING_START_BACKUP_MESSAGE] = split[1];
@@ -139,6 +141,8 @@ public class PropertiesSystem implements PropertyConstants {
                 }
                 else if (split[0].equals("CustomDateFormat"))
                     stringValues[STRING_CUSTOM_DATE_FORMAT] = split[1];
+                else if (split[0].equals("BackupDir"))
+                    stringValues[STRING_BACKUP_FOLDER] = split[1];
 //----------------------------------------------------------------------------//
                 else if (split[0].equals("Version"))
                     version = split[1];

@@ -38,6 +38,8 @@ public interface PropertyConstants {
     public final int BOOL_ACTIVATE_AUTOSAVE     = 3;
     /** Store the plugin folder also in the backup */
     public final int BOOL_BACKUP_PLUGINS        = 4;
+    /** Summarice all worlds in one archive/folder or in seperate one */
+    public final int BOOL_SUMMARIZE_CONTENT     = 5;
 //----------------------------------------------------------------------------//
     /** the index for the starting backup message */
     public final int STRING_START_BACKUP_MESSAGE    = 0;
@@ -50,4 +52,6 @@ public interface PropertyConstants {
     public final int STRING_NO_BACKUP_WORLDNAMES    = 2;
     /** the index for the custom date format string (optional) */
     public final int STRING_CUSTOM_DATE_FORMAT      = 3;
+    /** the folder where the backups are stored */
+    public final int STRING_BACKUP_FOLDER           = 4;
 }

@@ -44,8 +44,9 @@ public class Main extends JavaPlugin implements PropertyConstants {
 
     @Override
     public void onDisable () {
+        this.getServer().getScheduler().cancelTasks(this);
     }
-
+    
     @Override
     public void onEnable () {
 

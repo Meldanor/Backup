@@ -110,10 +110,10 @@ public class PropertiesSystem implements PropertyConstants {
             while ((line = bReader.readLine()) != null) {
                 if (line.startsWith("//"))
                     continue;
-                String[] split = line.split("=");
+                String[] split = line.split("=",2);
                 //------------------------------------------------------------//
                 if (split[0].equals("BackupIntervall"))
-                    intValues[INT_BACKUP_INTERVALL] = Integer.parseInt(split[1]) * 20 * 60;
+                    intValues[INT_BACKUP_INTERVALL] = Integer.parseInt(split[1]) * 1200;
                 else if (split[0].equals("MaximumBackups"))
                     intValues[INT_MAX_BACKUPS] = Integer.parseInt(split[1]);
                 //------------------------------------------------------------//
@@ -130,10 +130,18 @@ public class PropertiesSystem implements PropertyConstants {
                 else if (split[0].equals("SummarizeBackupContent"))
                     boolValues[BOOL_SUMMARIZE_CONTENT] = Boolean.parseBoolean(split[1]);
                 //------------------------------------------------------------//
-                else if (split[0].equals("MessageStartBackup"))
-                    stringValues[STRING_START_BACKUP_MESSAGE] = split[1];
-                else if (split[0].equals("MessageFinishBackup"))
-                    stringValues[STRING_FINISH_BACKUP_MESSAGE] = split[1];
+                else if (split[0].equals("MessageStartBackup")) {
+                    if (split.length == 2)
+                        stringValues[STRING_START_BACKUP_MESSAGE] = split[1];
+                    else
+                        stringValues[STRING_START_BACKUP_MESSAGE] = null;
+                }
+                else if (split[0].equals("MessageFinishBackup")) {
+                    if (split.length == 2)
+                        stringValues[STRING_FINISH_BACKUP_MESSAGE] = split[1];
+                    else
+                        stringValues[STRING_FINISH_BACKUP_MESSAGE] = null;
+                }
                 else if (split[0].equals("DontBackupWorlds")) {
                     stringValues[STRING_NO_BACKUP_WORLDNAMES] = "";
                     if (split.length == 2)

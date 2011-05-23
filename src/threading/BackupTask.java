@@ -114,7 +114,7 @@ public class BackupTask implements Runnable, PropertyConstants {
     private void deleteOldBackups () {
         try {
             //
-            File backupDir = new File("backups");
+            File backupDir = new File(pSystem.getStringProperty(STRING_BACKUP_FOLDER));
             // get every zip file in the backup Dir
             File[] tempArray = backupDir.listFiles();
             final int maxBackups = pSystem.getIntProperty(INT_MAX_BACKUPS);

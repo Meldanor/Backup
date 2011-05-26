@@ -62,26 +62,50 @@ public class BackupTask implements Runnable, PropertyConstants {
     }
 
     public void backup() throws Exception {
-        String backupDirName = pSystem.getStringProperty(STRING_BACKUP_FOLDER).concat(FILE_SEPARATOR);
-        if (backupName != null)
-            backupDirName = backupDirName.concat("custom").concat(FILE_SEPARATOR).concat(backupName);
-        else
-            backupDirName = backupDirName.concat(getDate());
-        File backupDir = new File(backupDirName);
-        backupDir.mkdir();
-        boolean summarizeContent = pSystem.getBooleanProperty(BOOL_SUMMARIZE_CONTENT);
-        while (!worldsToBackup.isEmpty()) {
-            String worldName = worldsToBackup.removeFirst();
-            FileUtils.copyDirectory(new File(worldName), new File(backupDirName.concat(FILE_SEPARATOR).concat(worldName)));
-            if (pSystem.getBooleanProperty(BOOL_SUMMARIZE_CONTENT));
-                // TODO : Implement the option with summarizing the content;
+
+        if (pSystem.getBooleanProperty(BOOL_SUMMARIZE_CONTENT)) {
+            String backupDirName = pSystem.getStringProperty(STRING_BACKUP_FOLDER).concat(FILE_SEPARATOR);
+            if (backupName != null)
+                backupDirName = backupDirName.concat("custom").concat(FILE_SEPARATOR).concat(backupName);
+            else
+                backupDirName = backupDirName.concat(getDate());
+            File backupDir = new File(backupDirName);
+            backupDir.mkdir();
+            while (!worldsToBackup.isEmpty()) {
+                String worldName = worldsToBackup.removeFirst();
+                FileUtils.copyDirectory(worldName, backupDirName.concat(FILE_SEPARATOR).concat(worldName));
+
+            }
+            if (pSystem.getBooleanProperty(BOOL_BACKUP_PLUGINS))
+                FileUtils.copyDirectory("plugins", backupDirName.concat(FILE_SEPARATOR).concat("plugins"));
+
+            if (pSystem.getBooleanProperty(BOOL_ZIP)) {
+                FileUtils.zipDir(backupDirName, backupDirName);
+                FileUtils.deleteDirectory(backupDir);
+            }
         }
-        if (pSystem.getBooleanProperty(BOOL_BACKUP_PLUGINS))
-            FileUtils.copyDirectory(new File("plugins"), new File(backupDirName.concat(FILE_SEPARATOR).concat("plugins")));
-        
-        if (pSystem.getBooleanProperty(BOOL_ZIP)) {
-            FileUtils.zipDir(backupDirName, backupDirName.concat(".zip"));
-            FileUtils.deleteDirectory(backupDir);
+        else {
+            String backupDirName = pSystem.getStringProperty(STRING_BACKUP_FOLDER).concat(FILE_SEPARATOR);
+            File backupDir = new File(backupDirName);
+            backupDir.mkdir();
+            boolean zip = pSystem.getBooleanProperty(BOOL_ZIP);
+            while (!worldsToBackup.isEmpty()) {
+                String worldName = worldsToBackup.removeFirst();
+                String destDir = backupDirName.concat(FILE_SEPARATOR).concat(worldName).concat("-").concat(getDate());
+                FileUtils.copyDirectory(worldName, destDir);
+                if (zip) {
+                    FileUtils.zipDir(destDir, destDir);
+                    FileUtils.deleteDirectory(new File(destDir));
+                }
+            }
+            if (pSystem.getBooleanProperty(BOOL_BACKUP_PLUGINS)) {
+                String destDir = backupDirName.concat(FILE_SEPARATOR).concat("plugins").concat("-").concat(getDate());
+                FileUtils.copyDirectory("plugins", destDir);
+                if (zip) {
+                    FileUtils.zipDir(destDir, destDir);
+                    FileUtils.deleteDirectory(new File(destDir));
+                }
+            }
         }
         deleteOldBackups ();
         finish();

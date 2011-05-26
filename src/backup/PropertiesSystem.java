@@ -160,7 +160,7 @@ public class PropertiesSystem implements PropertyConstants {
         }
         catch (Exception e) {
             e.printStackTrace(System.out);
-        } // so we can be sure, that the streams are really closed
+        } // so we can be sure, that the strea is closed
         finally {
             try {
                 if (bReader != null)

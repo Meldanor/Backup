@@ -121,8 +121,9 @@ public class FileUtils {
      * @throws IOException if an IO error occurs during copying
      * @since Commons IO 1.1
      */
-    public static void copyDirectory (File srcDir, File destDir) throws IOException {
-        copyDirectory(srcDir, destDir, true);
+    public static void copyDirectory (String srcDir, String destDir) throws IOException {
+
+        copyDirectory(new File(srcDir), new File(destDir), true);
     }
 
     /**
@@ -479,6 +480,8 @@ public class FileUtils {
      */
     public static void zipDir(String directory, String zipName) throws IOException {
         // create a ZipOutputStream to zip the data to
+        if (!zipName.endsWith(".zip"))
+            zipName += ".zip";
         ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipName));
         zipDir(directory, zos, "");
         // close the stream

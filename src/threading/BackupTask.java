@@ -17,6 +17,7 @@
 
 package threading;
 
+import java.io.IOException;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.Server;
 import io.FileUtils;
@@ -43,6 +44,8 @@ public class BackupTask implements Runnable, PropertyConstants {
     private final LinkedList<String> worldsToBackup;
     private final Server server;
     private final String backupName;
+
+    private static long lastBackupTime = -1;
 
     public BackupTask (PropertiesSystem pSystem, LinkedList<String> worldsToBackup, Server server, String backupName) {
         this.pSystem = pSystem;
@@ -73,8 +76,14 @@ public class BackupTask implements Runnable, PropertyConstants {
             backupDir.mkdir();
             while (!worldsToBackup.isEmpty()) {
                 String worldName = worldsToBackup.removeFirst();
-                FileUtils.copyDirectory(worldName, backupDirName.concat(FILE_SEPARATOR).concat(worldName));
-
+                try {
+                    FileUtils.copyDirectory(worldName, backupDirName.concat(FILE_SEPARATOR).concat(worldName));
+                }
+                catch (IOException e) {
+                    System.out.println("[BACKUP] An error occurs while creating a temporary copy of world ".concat(worldName).concat(". Maybe the complete world isn' backuped, please take a look at it!"));
+                    e.printStackTrace(System.out);
+                    server.broadcastMessage("[BACKUP] An error occurs while backup. Please report an admin!");
+                }
             }
             if (pSystem.getBooleanProperty(BOOL_BACKUP_PLUGINS))
                 FileUtils.copyDirectory("plugins", backupDirName.concat(FILE_SEPARATOR).concat("plugins"));
@@ -196,9 +205,21 @@ public class BackupTask implements Runnable, PropertyConstants {
                     server.broadcastMessage(completedBackupMessage);
                     System.out.println(completedBackupMessage);
                 }
+                lastBackupTime = System.currentTimeMillis();
             }
         };
         server.getScheduler().scheduleSyncDelayedTask(server.getPluginManager().getPlugin("Backup"), run);
     }
 
+    public static long getLastBackup() {
+        long time = System.currentTimeMillis() - lastBackupTime;
+        return time;
+    }
+
+    public static void initateTimer() {
+        if (lastBackupTime == -1)
+            lastBackupTime = System.currentTimeMillis();
+        else
+            throw new RuntimeException("The timer was already initiallized!");
+    }
 }

@@ -44,9 +44,6 @@ public class BackupTask implements Runnable, PropertyConstants {
     private final LinkedList<String> worldsToBackup;
     private final Server server;
     private final String backupName;
-
-    private static long lastBackupTime = -1;
-
     public BackupTask (PropertiesSystem pSystem, LinkedList<String> worldsToBackup, Server server, String backupName) {
         this.pSystem = pSystem;
         this.worldsToBackup = worldsToBackup;
@@ -205,21 +202,8 @@ public class BackupTask implements Runnable, PropertyConstants {
                     server.broadcastMessage(completedBackupMessage);
                     System.out.println(completedBackupMessage);
                 }
-                lastBackupTime = System.currentTimeMillis();
             }
         };
         server.getScheduler().scheduleSyncDelayedTask(server.getPluginManager().getPlugin("Backup"), run);
-    }
-
-    public static long getLastBackup() {
-        long time = System.currentTimeMillis() - lastBackupTime;
-        return time;
-    }
-
-    public static void initateTimer() {
-        if (lastBackupTime == -1)
-            lastBackupTime = System.currentTimeMillis();
-        else
-            throw new RuntimeException("The timer was already initiallized!");
     }
 }

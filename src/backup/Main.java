@@ -17,7 +17,6 @@
 
 package backup;
 
-import threading.BackupTask;
 import threading.PrepareBackupTask;
 import java.io.File;
 import org.bukkit.Server;
@@ -83,7 +82,6 @@ public class Main extends JavaPlugin implements PropertyConstants {
         int intervall = pSystem.getIntProperty(INT_BACKUP_INTERVALL);
         server.getScheduler().scheduleSyncRepeatingTask(this, run, intervall, intervall);
         System.out.println(this.getDescription().getFullName() + " was sucessfully loaded!");
-        BackupTask.initateTimer();
     }
 
     @Override

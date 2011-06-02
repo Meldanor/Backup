@@ -147,6 +147,14 @@ public class BackupTask implements Runnable, PropertyConstants {
             File backupDir = new File(pSystem.getStringProperty(STRING_BACKUP_FOLDER));
             // get every zip file in the backup Dir
             File[] tempArray = backupDir.listFiles();
+            File[] array = new File[tempArray.length - 1];
+            for (int i = 0 , j = 0; i < tempArray.length ; ++i) {
+                File file = tempArray[i];
+                if (file.isDirectory() && file.getName().equals("custom"))
+                    continue;
+                array[j++] = tempArray[i];
+            }
+            tempArray = array;
             final int maxBackups = pSystem.getIntProperty(INT_MAX_BACKUPS);
             // when are more backups existing as allowed as to store
             if (tempArray.length > maxBackups) {

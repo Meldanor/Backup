@@ -80,7 +80,10 @@ public class Main extends JavaPlugin implements PropertyConstants {
         }
         // start the backupTask, which will starts after X minutes and backup after X minutes
         int intervall = pSystem.getIntProperty(INT_BACKUP_INTERVALL);
-        server.getScheduler().scheduleSyncRepeatingTask(this, run, intervall, intervall);
+        if (intervall != -1)
+            server.getScheduler().scheduleSyncRepeatingTask(this, run, intervall, intervall);
+        else
+            System.out.println("[BACKUP] You have disabled the automatic backup function!");
         System.out.println(this.getDescription().getFullName() + " was sucessfully loaded!");
     }
 

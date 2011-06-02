@@ -112,8 +112,11 @@ public class PropertiesSystem implements PropertyConstants {
                     continue;
                 String[] split = line.split("=",2);
                 //------------------------------------------------------------//
-                if (split[0].equals("BackupIntervall"))
-                    intValues[INT_BACKUP_INTERVALL] = Integer.parseInt(split[1]) * 1200;
+                if (split[0].equals("BackupIntervall")) {
+                    intValues[INT_BACKUP_INTERVALL] = Integer.parseInt(split[1]);
+                    if (intValues[INT_BACKUP_INTERVALL] != -1)
+                        intValues[INT_BACKUP_INTERVALL] *= 1200;
+                }
                 else if (split[0].equals("MaximumBackups"))
                     intValues[INT_MAX_BACKUPS] = Integer.parseInt(split[1]);
                 //------------------------------------------------------------//
